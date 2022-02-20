@@ -18,18 +18,14 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.ocoor.ui.main.MainFragment
 import com.example.ocoor.databinding.MainActivityBinding
-import com.fenchtose.nocropper.Cropper
 import com.google.android.gms.vision.Frame
 import com.google.android.gms.vision.text.TextBlock
 import com.google.android.gms.vision.text.TextRecognizer
-import com.google.mlkit.vision.text.TextRecognition
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
-import java.util.jar.Manifest
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -66,7 +62,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         button_capture.setOnClickListener{
-            CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).start(this)
+            println("Test1")
+            CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).start(this@MainActivity)
+
         }
 
         button_copy.setOnClickListener {
@@ -76,18 +74,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        println("Test2")
         super.onActivityResult(requestCode, resultCode, data)
+        println("Test3")
         if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
             var result:CropImage.ActivityResult = CropImage.getActivityResult(data)
             if(resultCode == RESULT_OK) run {
                 var resultUri: Uri = result.getUri()
                 bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, resultUri)
                 getTextFromImage(bitmap)
+            }else{
+                println("RESULT_NOT_OK")
             }
+        }else{
+            println("Wrong requestCode")
+            println(requestCode)
         }
     }
     private fun getTextFromImage(bitmap:Bitmap){
-        val recognizer:TextRecognizer = TextRecognizer.Builder(this).build()
+        val recognizer:TextRecognizer = TextRecognizer.Builder(this@MainActivity).build()
         if(!recognizer.isOperational){
             Toast.makeText(this, "Error", Toast.LENGTH_SHORT)
         }else {
