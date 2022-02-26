@@ -121,8 +121,10 @@ class MainActivity : AppCompatActivity() {
                 println("REQUEST_IMAGE_CAPTURE")
                 if (resultCode == RESULT_OK){
                     val imageBitmap = data?.extras?.get("data") as Bitmap
+                    println("Image taken")
                     val uri:Uri = getImageUri(this, imageBitmap)
-                        launchImageCrop(uri)
+                    println("Image converted")
+                    launchImageCrop(uri)
                 } else {
                     Log.e(TAG, "Image selection Error")
                 }
@@ -182,6 +184,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
+                processTextBlock(visionText)
                 // [END get_text]
                 // [END_EXCLUDE]
             }
@@ -190,7 +193,7 @@ class MainActivity : AppCompatActivity() {
                 // ...
             }
         // [END run_detector]
-        processTextBlock(result)
+
     }
 
     private fun processTextBlock(result: Text) {
@@ -211,6 +214,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        println(resultText)
+        message.text = resultText
         // [END mlkit_process_text_block]
     }
 
