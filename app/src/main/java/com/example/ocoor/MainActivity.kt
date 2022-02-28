@@ -1,28 +1,28 @@
 package com.example.ocoor
 
 
+import android.annotation.SuppressLint
 import android.content.*
 import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.provider.MediaStore.Images
 import android.util.Log
-import android.util.SparseArray
-import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import com.example.ocoor.databinding.MainActivityBinding
-import com.google.android.gms.vision.Frame
-import com.google.android.gms.vision.text.TextBlock
-import com.google.android.gms.vision.text.TextRecognizer
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
@@ -30,18 +30,28 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import java.io.ByteArrayOutputStream
+import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var button_capture:Button;
+    lateinit var button_gallary:Button;
     lateinit var button_copy:Button;
     lateinit var message:TextView;
+    lateinit var cropImageView:CropImageView;
+    lateinit var croppedImage: Bitmap;
     private lateinit var binding: MainActivityBinding
     lateinit var bitmap: Bitmap
 
     private val GALLERY_REQUEST_CODE = 1234
     private val REQUEST_IMAGE_CAPTURE = 1
+    private val CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034
+
+    val APP_TAG = "MyCustomApp"
+    val photoFileName = "photo.jpg"
+    var photoFile: File? = null
+
 
     val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -56,40 +66,85 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // get view binding
         binding = MainActivityBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
+        // get views from binding
         button_capture = binding.buttonCapture
         button_copy = binding.buttonCopy
+        button_gallary = binding.buttonGallery
         message = binding.message
+        cropImageView = binding.cropImageView
 
-        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
-            requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
-        }
 
+
+        // button to take picture witch camera
         button_capture.setOnClickListener{
-            //CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).start(this@MainActivity)
-            takePicture()
-        }
 
-        button_copy.setOnClickListener {
-            //var scanned_text:String = message.text.toString()
-            //copyToClipBoard(scanned_text)
+            // get permission to sue camera
+            if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+            }
+            onLaunchCamera()
+        }
+        // button to pick pickture from galery
+        button_gallary.setOnClickListener {
             pickFromGallery()
         }
-
-    }
-
-    private fun takePicture() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        try {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-            takePictureIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        } catch (e: ActivityNotFoundException) {
-            Log.e(TAG, "No Camera found")
+        // button to copy the scanned text to clipboard
+        button_copy.setOnClickListener {
+            var scanned_text:String = message.text.toString()
+            copyToClipBoard(scanned_text)
         }
     }
+
+    //----------------------------------------------------------------------------------------------
+    // button functions
+    //----------------------------------------------------------------------------------------------
+    @SuppressLint("QueryPermissionsNeeded")
+    fun onLaunchCamera() {
+        // create Intent to take a picture and return control to the calling application
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        // Create a File reference for future access
+        photoFile = getPhotoFileUri(photoFileName)
+
+        // wrap File object into a content provider
+        // required for API >= 24
+        // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
+        if (photoFile != null) {
+
+            val fileProvider: Uri =
+                FileProvider.getUriForFile(this, "com.codepath.fileprovider", photoFile!!)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
+
+            // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+            // So as long as the result is not null, it's safe to use the intent.
+            startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
+         } else {
+            println("No photoFile found")
+        }
+    }
+
+    // Returns the File for a photo stored on disk given the fileName
+    fun getPhotoFileUri(fileName: String): File {
+        // Get safe storage directory for photos
+        // Use `getExternalFilesDir` on Context to access package-specific directories.
+        // This way, we don't need to request external read/write runtime permissions.
+        val mediaStorageDir =
+            File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG)
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
+            Log.d(APP_TAG, "failed to create directory")
+        }
+
+        // Return the file target for the photo based on filename
+        return File(mediaStorageDir.path + File.separator + fileName)
+    }
+
 
     private fun pickFromGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -100,15 +155,27 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, GALLERY_REQUEST_CODE)
     }
 
+    private fun copyToClipBoard(text:String){
+        val clipboard:ClipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clip:ClipData = ClipData.newPlainText("Copied data", text)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(this, "Copied to Clipboard", Toast.LENGTH_SHORT).show()
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // onActivityResult
+    //----------------------------------------------------------------------------------------------
+    // handels action after an activity returned a result
+    // activities are (gallery, camera, cropping)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         when(requestCode){
+
+            // when image cropped use forward text
             CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE ->{
-                println("test1")
                 var result: CropImage.ActivityResult = CropImage.getActivityResult(data)
                 if (resultCode == RESULT_OK) run {
-                    println("Result ok")
                     var resultUri: Uri = result.getUri()
                     bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, resultUri)
                     getTextFromImage(bitmap)
@@ -117,19 +184,23 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            REQUEST_IMAGE_CAPTURE -> {
-                println("REQUEST_IMAGE_CAPTURE")
-                if (resultCode == RESULT_OK){
-                    val imageBitmap = data?.extras?.get("data") as Bitmap
-                    println("Image taken")
-                    val uri:Uri = getImageUri(this, imageBitmap)
-                    println("Image converted")
+            // when picture taken (with cam) start cropping
+            CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE -> {
+                if (resultCode == RESULT_OK) {
+                    // by this point we have the camera photo on disk
+                    val takenImage = BitmapFactory.decodeFile(photoFile!!.absolutePath)
+                    val uri = Uri.fromFile( File(photoFile!!.absolutePath))
                     launchImageCrop(uri)
-                } else {
-                    Log.e(TAG, "Image selection Error")
+                    // RESIZE BITMAP, see section below
+                    // Load the taken image into a preview
+                    //val ivPreview: ImageView = findViewById(R.id.imageView)
+                    //ivPreview.setImageBitmap(takenImage)
+                } else { // Result was a failure
+                    Toast.makeText(this, "Picture wasn't taken!", Toast.LENGTH_SHORT).show()
                 }
             }
 
+            // when picture choosen (from gallery) start cropping
             GALLERY_REQUEST_CODE -> {
                 if (resultCode == RESULT_OK){
                     data?.data?.let { uri ->
@@ -142,22 +213,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
-        val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 1000, bytes)
-        val path = Images.Media.insertImage(inContext.contentResolver, inImage, "Title", null)
-        return Uri.parse(path)
-    }
-
+    //----------------------------------------------------------------------------------------------
+    // cropping
+    //----------------------------------------------------------------------------------------------
     private fun launchImageCrop(uri: Uri){
-        println("test")
         CropImage.activity(uri)
+            //.setAutoZoomEnabled(true)
             .setGuidelines(CropImageView.Guidelines.ON)
-            .setAspectRatio(1920, 1080)
+            .setBorderCornerColor(Color.RED)
+            //.setAspectRatio(1920, 1080)
             .setCropShape(CropImageView.CropShape.RECTANGLE) // default is rectangle
             .start(this)
     }
 
+
+    //----------------------------------------------------------------------------------------------
+    // OCR - functions
+    //----------------------------------------------------------------------------------------------
     private fun getTextFromImage(bitmap:Bitmap) {
 
         println("getTextFromImage")
@@ -219,19 +291,6 @@ class MainActivity : AppCompatActivity() {
         // [END mlkit_process_text_block]
     }
 
-
-    //    binding.message.setText(stringBuilder.toString())
-     //   button_capture.setText("Retake")
-    //   button_copy.visibility = View.VISIBLE
-
-
-
-    private fun copyToClipBoard(text:String){
-        val clipboard:ClipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clip:ClipData = ClipData.newPlainText("Copied data", text)
-        clipboard.setPrimaryClip(clip)
-        Toast.makeText(this, "Copied to Clipboard", Toast.LENGTH_SHORT).show()
-    }
 }
 
 
