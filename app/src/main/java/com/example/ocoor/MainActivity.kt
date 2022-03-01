@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var button_capture:Button;
     lateinit var button_gallary:Button;
     lateinit var button_copy:Button;
+    lateinit var button_share:Button;
     lateinit var message:TextView;
     lateinit var cropImageView:CropImageView;
     lateinit var croppedImage: Bitmap;
@@ -77,8 +78,9 @@ class MainActivity : AppCompatActivity() {
         button_capture = binding.buttonCapture
         button_copy = binding.buttonCopy
         button_gallary = binding.buttonGallery
+        button_share = binding.buttonShare
         message = binding.message
-        cropImageView = binding.cropImageView
+        //cropImageView = binding.cropImageView
 
 
 
@@ -99,6 +101,11 @@ class MainActivity : AppCompatActivity() {
         button_copy.setOnClickListener {
             var scanned_text:String = message.text.toString()
             copyToClipBoard(scanned_text)
+        }
+
+        // button to copy the scanned text to clipboard
+        button_share.setOnClickListener {
+
         }
 
         // handle incomming data from other apps
