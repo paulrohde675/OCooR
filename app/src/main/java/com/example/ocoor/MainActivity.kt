@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
     val photoFileName = "photo.jpg"
     var photoFile: File? = null
 
+    var scanned_text:String = ""
 
     val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -99,12 +100,20 @@ class MainActivity : AppCompatActivity() {
         }
         // button to copy the scanned text to clipboard
         button_copy.setOnClickListener {
-            var scanned_text:String = message.text.toString()
             copyToClipBoard(scanned_text)
         }
 
-        // button to copy the scanned text to clipboard
+        // button to share scanned text to other apps
         button_share.setOnClickListener {
+
+            val sendIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, scanned_text)
+                type = "text/plain"
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
 
         }
 
@@ -337,8 +346,8 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        println(resultText)
         message.text = resultText
+        scanned_text = message.text.toString()
         // [END mlkit_process_text_block]
     }
 
