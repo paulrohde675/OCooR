@@ -11,6 +11,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.Parcelable
 import android.provider.MediaStore
 import android.provider.MediaStore.Images
 import android.util.Log
@@ -98,6 +99,49 @@ class MainActivity : AppCompatActivity() {
         button_copy.setOnClickListener {
             var scanned_text:String = message.text.toString()
             copyToClipBoard(scanned_text)
+        }
+
+        // handle incomming data from other apps
+        //----------------------------------------------------------------------------------------------
+        when {
+            intent?.action == Intent.ACTION_SEND -> {
+                if ("text/plain" == intent.type) {
+                    handleSendText(intent) // Handle text being sent
+                } else if (intent.type?.startsWith("image/") == true) {
+                    handleSendImage(intent) // Handle single image being sent
+                }
+            }
+            intent?.action == Intent.ACTION_SEND_MULTIPLE
+                    && intent.type?.startsWith("image/") == true -> {
+                handleSendMultipleImages(intent) // Handle multiple images being sent
+            }
+            else -> {
+                // Handle other intents, such as being started from the home screen
+            }
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // catch incoming data from other apps
+    //----------------------------------------------------------------------------------------------
+    private fun handleSendText(intent: Intent) {
+        intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+            // Update UI to reflect text being shared
+            Toast.makeText(this, "Text sharing not implemented", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun handleSendImage(intent: Intent) {
+        println("hadel send image")
+        (intent.getParcelableExtra<Parcelable>(Intent.EXTRA_STREAM) as? Uri)?.let {
+            launchImageCrop(it)
+        }
+    }
+
+    private fun handleSendMultipleImages(intent: Intent) {
+        intent.getParcelableArrayListExtra<Parcelable>(Intent.EXTRA_STREAM)?.let {
+            // Update UI to reflect multiple images being shared
+            Toast.makeText(this, "Multiple image sharing not implemented", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -289,6 +333,29 @@ class MainActivity : AppCompatActivity() {
         println(resultText)
         message.text = resultText
         // [END mlkit_process_text_block]
+    }
+
+    //----------------------------------------------------------------------------------------------
+    // OCR - functions
+    //----------------------------------------------------------------------------------------------
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent) {
+        val appLinkAction = intent.action
+        val appLinkData: Uri? = intent.data
+        if (Intent.ACTION_VIEW == appLinkAction) {
+            appLinkData?.lastPathSegment?.also { recipeId ->
+                Uri.parse("content://com.recipe_app/recipe/")
+                    .buildUpon()
+                    .appendPath(recipeId)
+                    .build().also { appData ->
+                        //showRecipe(appData)
+                    }
+            }
+        }
     }
 
 }
