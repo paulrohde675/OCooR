@@ -335,10 +335,16 @@ class MainActivity : AppCompatActivity() {
             val blockText = block.text
             val blockCornerPoints = block.cornerPoints
             val blockFrame = block.boundingBox
+            println("-------")
+            println("Block")
+            println(blockText)
             for (line in block.lines) {
                 val lineText = line.text
                 val lineCornerPoints = line.cornerPoints
                 val lineFrame = line.boundingBox
+                println("-------")
+                println("Line")
+                println(lineText)
                 for (element in line.elements) {
                     val elementText = element.text
                     val elementCornerPoints = element.cornerPoints
@@ -351,9 +357,6 @@ class MainActivity : AppCompatActivity() {
         // [END mlkit_process_text_block]
     }
 
-    //----------------------------------------------------------------------------------------------
-    // OCR - functions
-    //----------------------------------------------------------------------------------------------
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleIntent(intent)
