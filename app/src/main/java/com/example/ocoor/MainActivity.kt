@@ -23,6 +23,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
+import com.example.ocoor.Adapter.ItemAdapter
+import com.example.ocoor.Model.ItemModel
+import com.example.ocoor.Utils.AppDatabase
+import com.example.ocoor.Utils.User
 import com.example.ocoor.databinding.MainActivityBinding
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
@@ -36,16 +43,20 @@ import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
+    // views
+    private lateinit var binding: MainActivityBinding
     lateinit var button_capture:Button;
     lateinit var button_gallary:Button;
     lateinit var button_copy:Button;
     lateinit var button_share:Button;
-    lateinit var message:TextView;
-    lateinit var cropImageView:CropImageView;
-    lateinit var croppedImage: Bitmap;
-    private lateinit var binding: MainActivityBinding
-    lateinit var bitmap: Bitmap
+    //lateinit var message:TextView;
+    lateinit var itemRecyclerView:RecyclerView;
 
+    // variables
+    lateinit var bitmap: Bitmap
+    var scanned_text:String = ""
+
+    // intent codes
     private val GALLERY_REQUEST_CODE = 1234
     private val REQUEST_IMAGE_CAPTURE = 1
     private val CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034
@@ -54,8 +65,10 @@ class MainActivity : AppCompatActivity() {
     val photoFileName = "photo.jpg"
     var photoFile: File? = null
 
-    var scanned_text:String = ""
+    // adapter
+    lateinit var itemAdapter:ItemAdapter
 
+    // permissions
     val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
@@ -80,11 +93,14 @@ class MainActivity : AppCompatActivity() {
         button_copy = binding.buttonCopy
         button_gallary = binding.buttonGallery
         button_share = binding.buttonShare
-        message = binding.message
-        //cropImageView = binding.cropImageView
+        //message = binding.textview
+        itemRecyclerView = binding.itemRecyclerView
 
+        // hide actionbar
+        supportActionBar?.hide()
 
-
+        // buttons
+        //------------------------------------------------------------------------------------------
         // button to take picture witch camera
         button_capture.setOnClickListener{
 
@@ -117,8 +133,15 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        // recycler view
+        //------------------------------------------------------------------------------------------
+        itemAdapter = ItemAdapter(mutableListOf())
+        itemRecyclerView.layoutManager = LinearLayoutManager(this)
+        itemRecyclerView.adapter = itemAdapter
+
+
         // handle incomming data from other apps
-        //----------------------------------------------------------------------------------------------
+        //------------------------------------------------------------------------------------------
         when {
             intent?.action == Intent.ACTION_SEND -> {
                 if ("text/plain" == intent.type) {
@@ -135,6 +158,19 @@ class MainActivity : AppCompatActivity() {
                 // Handle other intents, such as being started from the home screen
             }
         }
+        println("Test 01")
+        // Database
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "database-name"
+        ).build()
+
+        println("Test 02")
+        val userDao = db.userDao()
+        userDao.insertAll(User(1, "Annika", "Böhme"))
+        val users: List<User> = userDao.getAll()
+        println(users)
+
     }
 
     //----------------------------------------------------------------------------------------------
@@ -335,6 +371,12 @@ class MainActivity : AppCompatActivity() {
             val blockText = block.text
             val blockCornerPoints = block.cornerPoints
             val blockFrame = block.boundingBox
+
+            // add new item to recyclerView from text block
+            val newItem:ItemModel = ItemModel()
+            newItem.itemText = block.text
+            itemAdapter.addItem(newItem)
+
             println("-------")
             println("Block")
             println(blockText)
@@ -352,8 +394,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        message.text = resultText
-        scanned_text = message.text.toString()
+
+        //message.text = resultText
+        // scanned_text = message.text.toString()
         // [END mlkit_process_text_block]
     }
 
