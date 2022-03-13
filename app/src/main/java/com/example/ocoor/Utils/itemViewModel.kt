@@ -15,14 +15,14 @@ class ItemViewModel(application: Application): AndroidViewModel(application) {
 
     init {
         println("Test")
-        val userDao = AppDatabase.getDatabase(application).userDao()
+        val userDao = AppDatabase.getDatabase(application).itemDao()
         repository = ItemRepository(userDao)
         readAllData = repository.readAllData
     }
 
-    fun addUser(user: Item){
+    fun addUser(item: Item){
         viewModelScope.launch (Dispatchers.IO){
-            repository.addUser(user)
+            repository.addItem(item)
         }
     }
 

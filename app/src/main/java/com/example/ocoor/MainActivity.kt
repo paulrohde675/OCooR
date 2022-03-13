@@ -173,8 +173,8 @@ class MainActivity : AppCompatActivity() {
         println("Test 01")
         mItemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)
 
-        mItemViewModel.readAllData.observe(this, Observer { item ->
-            itemAdapter.setData(item)
+        mItemViewModel.readAllData.observe(this, Observer { items ->
+            itemAdapter.setData(items.filter {item -> item.status == "False" })
         })
     }
 
@@ -381,7 +381,7 @@ class MainActivity : AppCompatActivity() {
             // add new item to recyclerView from text block
             //val newItem:ItemModel = ItemModel()
             //newItem.itemText = block.text
-            mItemViewModel.addUser(Item(id=0, status="True", itemText=block.text))
+            mItemViewModel.addUser(Item(id=0, status="False", itemText=block.text))
             //itemAdapter.addItem(newItem)
 
             println("-------")

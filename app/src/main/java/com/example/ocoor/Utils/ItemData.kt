@@ -6,7 +6,7 @@ import androidx.room.*
 @Entity
 data class Item(
     @PrimaryKey(autoGenerate = true) val id: Int, //
-    @ColumnInfo(name = "first_name") val status: String?,
+    @ColumnInfo(name = "first_name") var status: String?,
     @ColumnInfo(name = "last_name") val itemText: String?
 )
 
@@ -28,6 +28,9 @@ interface ItemDao {
     @Query("SELECT * FROM item ORDER BY id ASC")
     fun readAllData(): LiveData<List<Item>>
 
+    @Update
+    suspend fun updateItem()
+
     @Delete
     fun rmItem(item: Item)
 
@@ -46,6 +49,10 @@ class ItemRepository(private val itemDao: ItemDao){
 
     suspend fun rmItem(item:Item){
         itemDao.rmItem(item)
+    }
+
+    suspend fun updateItem(item: Item){
+        itemDao.updateItem()
     }
 
 }
