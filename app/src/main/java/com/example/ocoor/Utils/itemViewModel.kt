@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class ItemViewModel(application: Application): AndroidViewModel(application) {
 
-    val readAllData: LiveData<List<User>>
+    val readAllData: LiveData<List<Item>>
     private val repository: ItemRepository
 
     init {
@@ -20,16 +20,17 @@ class ItemViewModel(application: Application): AndroidViewModel(application) {
         readAllData = repository.readAllData
     }
 
-    fun addUser(user: User){
+    fun addUser(user: Item){
         viewModelScope.launch (Dispatchers.IO){
             repository.addUser(user)
         }
     }
 
-    fun rmItem(user: User){
+    fun rmItem(user: Item){
         viewModelScope.launch (Dispatchers.IO){
             repository.rmItem(user)
         }
     }
 
 }
+

@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ocoor.Model.ItemModel
-import com.example.ocoor.Utils.User
+import com.example.ocoor.Utils.Item
 import com.example.ocoor.databinding.ItemLayoutBinding
 
 
-class ItemAdapter(var itemList: List<User>) :
+class ItemAdapter(var itemList: List<Item>) :
     RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
     inner class ItemViewHolder(val binding: ItemLayoutBinding)
@@ -39,7 +39,7 @@ class ItemAdapter(var itemList: List<User>) :
     //    notifyDataSetChanged()
     //}
 
-    fun setData(items: List<User>){
+    fun setData(items: List<Item>){
         itemList = items.toMutableList()
         notifyDataSetChanged()
     }

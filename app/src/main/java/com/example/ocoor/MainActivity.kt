@@ -34,7 +34,7 @@ import com.example.ocoor.Adapter.ItemAdapter
 import com.example.ocoor.Model.ItemModel
 import com.example.ocoor.Utils.AppDatabase
 import com.example.ocoor.Utils.ItemViewModel
-import com.example.ocoor.Utils.User
+import com.example.ocoor.Utils.Item
 import com.example.ocoor.databinding.MainActivityBinding
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
@@ -173,8 +173,8 @@ class MainActivity : AppCompatActivity() {
         println("Test 01")
         mItemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)
 
-        mItemViewModel.readAllData.observe(this, Observer { user ->
-            itemAdapter.setData(user)
+        mItemViewModel.readAllData.observe(this, Observer { item ->
+            itemAdapter.setData(item)
         })
     }
 
@@ -381,7 +381,7 @@ class MainActivity : AppCompatActivity() {
             // add new item to recyclerView from text block
             //val newItem:ItemModel = ItemModel()
             //newItem.itemText = block.text
-            mItemViewModel.addUser(User(uid=0, status="True", itemText=block.text))
+            mItemViewModel.addUser(Item(id=0, status="True", itemText=block.text))
             //itemAdapter.addItem(newItem)
 
             println("-------")
