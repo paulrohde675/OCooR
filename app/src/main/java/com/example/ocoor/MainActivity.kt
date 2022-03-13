@@ -20,15 +20,20 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.example.ocoor.Adapter.ItemAdapter
 import com.example.ocoor.Model.ItemModel
 import com.example.ocoor.Utils.AppDatabase
+import com.example.ocoor.Utils.ItemViewModel
 import com.example.ocoor.Utils.User
 import com.example.ocoor.databinding.MainActivityBinding
 import com.google.mlkit.vision.common.InputImage
@@ -80,8 +85,13 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    // data_base
+    private lateinit var mItemViewModel: ItemViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        println("Test 1")
 
         // get view binding
         binding = MainActivityBinding.inflate(layoutInflater)
@@ -158,19 +168,14 @@ class MainActivity : AppCompatActivity() {
                 // Handle other intents, such as being started from the home screen
             }
         }
-        println("Test 01")
+
         // Database
-        val db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "database-name"
-        ).build()
+        println("Test 01")
+        mItemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)
 
-        println("Test 02")
-        val userDao = db.userDao()
-        userDao.insertAll(User(1, "Annika", "Böhme"))
-        val users: List<User> = userDao.getAll()
-        println(users)
-
+        mItemViewModel.readAllData.observe(this, Observer { user ->
+            itemAdapter.setData(user)
+        })
     }
 
     //----------------------------------------------------------------------------------------------
@@ -365,6 +370,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun processTextBlock(result: Text) {
+
         // [START mlkit_process_text_block]
         val resultText = result.text
         for (block in result.textBlocks) {
@@ -373,9 +379,10 @@ class MainActivity : AppCompatActivity() {
             val blockFrame = block.boundingBox
 
             // add new item to recyclerView from text block
-            val newItem:ItemModel = ItemModel()
-            newItem.itemText = block.text
-            itemAdapter.addItem(newItem)
+            //val newItem:ItemModel = ItemModel()
+            //newItem.itemText = block.text
+            mItemViewModel.addUser(User(uid=0, status="True", itemText=block.text))
+            //itemAdapter.addItem(newItem)
 
             println("-------")
             println("Block")
@@ -384,9 +391,9 @@ class MainActivity : AppCompatActivity() {
                 val lineText = line.text
                 val lineCornerPoints = line.cornerPoints
                 val lineFrame = line.boundingBox
-                println("-------")
-                println("Line")
-                println(lineText)
+                //println("-------")
+                //println("Line")
+                //println(lineText)
                 for (element in line.elements) {
                     val elementText = element.text
                     val elementCornerPoints = element.cornerPoints
@@ -420,6 +427,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
+    // functions to interact with database
+    private fun deleteItem(){
+
+
+
+    }
 }
 
 

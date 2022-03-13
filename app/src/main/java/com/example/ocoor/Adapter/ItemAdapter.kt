@@ -4,10 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ocoor.Model.ItemModel
+import com.example.ocoor.Utils.User
 import com.example.ocoor.databinding.ItemLayoutBinding
 
 
-class ItemAdapter(private val itemList: MutableList<ItemModel>) :
+class ItemAdapter(var itemList: List<User>) :
     RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
     inner class ItemViewHolder(val binding: ItemLayoutBinding)
@@ -33,9 +34,13 @@ class ItemAdapter(private val itemList: MutableList<ItemModel>) :
 
     fun  Int.toBoolean() = this == 1
 
-    fun addItem(item: ItemModel){
-        itemList.add(item)
+    //fun addItem(item: User){
+    //    itemList.add(item)
+    //    notifyDataSetChanged()
+    //}
+
+    fun setData(items: List<User>){
+        itemList = items.toMutableList()
         notifyDataSetChanged()
     }
-
 }
