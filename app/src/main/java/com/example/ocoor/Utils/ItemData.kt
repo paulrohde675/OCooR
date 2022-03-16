@@ -22,14 +22,14 @@ interface ItemDao {
             "last_name LIKE :last LIMIT 1")
     fun findByName(first: String, last: String): Item
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE) //REPLACE
     suspend fun addItem(item: Item)
 
     @Query("SELECT * FROM item ORDER BY id ASC")
     fun readAllData(): LiveData<List<Item>>
 
-    @Update
-    suspend fun updateItem()
+    //@Update
+    //suspend fun updateItem()
 
     @Delete
     fun rmItem(item: Item)
@@ -51,8 +51,8 @@ class ItemRepository(private val itemDao: ItemDao){
         itemDao.rmItem(item)
     }
 
-    suspend fun updateItem(item: Item){
-        itemDao.updateItem()
-    }
+    //suspend fun updateItem(item: Item){
+    //    itemDao.updateItem()
+    //}
 
 }

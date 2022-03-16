@@ -1,5 +1,6 @@
 package com.example.ocoor.Adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,7 @@ class ItemAdapter(var itemList: List<Item>) :
     RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
     inner class ItemViewHolder(val binding: ItemLayoutBinding)
-        :RecyclerView.ViewHolder(binding.root)
+        :RecyclerView.ViewHolder(binding.root){}
 
     // data_base
     private lateinit var mItemViewModel: ItemViewModel
@@ -35,12 +36,8 @@ class ItemAdapter(var itemList: List<Item>) :
         holder.binding.itemCheckbox.text = currentItem.itemText
         holder.binding.itemCheckbox.isChecked = currentItem.status.toBoolean()
 
-        mItemViewModel = ViewModelProvider(MainActivity).get(ItemViewModel::class.java)
-
-
         holder.binding.itemCheckbox.setOnClickListener(){
             itemList[position].status = holder.binding.itemCheckbox.isChecked.toString()
-
         }
 
     }
