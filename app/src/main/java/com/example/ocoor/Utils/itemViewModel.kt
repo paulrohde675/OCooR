@@ -20,7 +20,7 @@ class ItemViewModel(application: Application): AndroidViewModel(application) {
         readAllData = repository.readAllData
     }
 
-    fun addUser(item: Item){
+    fun addItem(item: Item){
         viewModelScope.launch (Dispatchers.IO){
             repository.addItem(item)
         }

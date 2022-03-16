@@ -1,33 +1,21 @@
 package com.example.ocoor.Adapter
 
-import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ocoor.MainActivity
-import com.example.ocoor.Model.ItemModel
 import com.example.ocoor.Utils.Item
 import com.example.ocoor.Utils.ItemViewModel
 import com.example.ocoor.databinding.ItemLayoutBinding
 
 
-class ItemAdapter(var itemList: List<Item>) :
+class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel) :
     RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
     inner class ItemViewHolder(val binding: ItemLayoutBinding)
         :RecyclerView.ViewHolder(binding.root){}
 
-    // data_base
-    private lateinit var mItemViewModel: ItemViewModel
-    //val itemList:List<ItemModel> = emptyList()
-    //val activity:MainActivity =
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val binding = ItemLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-
-
         return ItemViewHolder(binding)
     }
 
@@ -36,12 +24,13 @@ class ItemAdapter(var itemList: List<Item>) :
         holder.binding.itemCheckbox.text = currentItem.itemText
         holder.binding.itemCheckbox.isChecked = currentItem.status.toBoolean()
 
+        // update item when button is checked
         holder.binding.itemCheckbox.setOnClickListener(){
+
             itemList[position].status = holder.binding.itemCheckbox.isChecked.toString()
+            mItemViewModel.addItem(Item(id=currentItem.id, status="True", itemText=currentItem.itemText))
         }
-
     }
-
 
     override fun getItemCount(): Int {
         return itemList.size

@@ -22,7 +22,7 @@ interface ItemDao {
             "last_name LIKE :last LIMIT 1")
     fun findByName(first: String, last: String): Item
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE) //REPLACE
+    @Insert(onConflict = OnConflictStrategy.REPLACE) //REPLACE //IGNORE
     suspend fun addItem(item: Item)
 
     @Query("SELECT * FROM item ORDER BY id ASC")

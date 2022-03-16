@@ -13,28 +13,20 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.Parcelable
 import android.provider.MediaStore
-import android.provider.MediaStore.Images
 import android.util.Log
 import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
 import com.example.ocoor.Adapter.ItemAdapter
-import com.example.ocoor.Model.ItemModel
-import com.example.ocoor.Utils.AppDatabase
-import com.example.ocoor.Utils.ItemViewModel
 import com.example.ocoor.Utils.Item
+import com.example.ocoor.Utils.ItemViewModel
 import com.example.ocoor.databinding.MainActivityBinding
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
@@ -42,7 +34,6 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
-import java.io.ByteArrayOutputStream
 import java.io.File
 
 
@@ -73,6 +64,9 @@ class MainActivity : AppCompatActivity() {
     // adapter
     lateinit var itemAdapter:ItemAdapter
 
+    // data_base
+    private lateinit var mItemViewModel: ItemViewModel
+
     // permissions
     val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -85,8 +79,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-    // data_base
-    private lateinit var mItemViewModel: ItemViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,12 +135,23 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+        // Database
+        println("Test 01")
+        //mItemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)
+
+        // get database viewModel
+        mItemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)
+
         // recycler view
         //------------------------------------------------------------------------------------------
-        itemAdapter = ItemAdapter(mutableListOf())
+        itemAdapter = ItemAdapter(mutableListOf(), mItemViewModel)
         itemRecyclerView.layoutManager = LinearLayoutManager(this)
         itemRecyclerView.adapter = itemAdapter
 
+        // Upate recylerView whenever the datase is modified
+        mItemViewModel.readAllData.observe(this, Observer { items ->
+            itemAdapter.setData(items.filter {item -> item.status == "False" })
+        })
 
         // handle incomming data from other apps
         //------------------------------------------------------------------------------------------
@@ -168,14 +171,6 @@ class MainActivity : AppCompatActivity() {
                 // Handle other intents, such as being started from the home screen
             }
         }
-
-        // Database
-        println("Test 01")
-        mItemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)
-
-        mItemViewModel.readAllData.observe(this, Observer { items ->
-            itemAdapter.setData(items.filter {item -> item.status == "False" })
-        })
     }
 
     //----------------------------------------------------------------------------------------------
@@ -381,7 +376,7 @@ class MainActivity : AppCompatActivity() {
             // add new item to recyclerView from text block
             //val newItem:ItemModel = ItemModel()
             //newItem.itemText = block.text
-            mItemViewModel.addUser(Item(id=0, status="False", itemText=block.text))
+            mItemViewModel.addItem(Item(id=0, status="False", itemText=block.text))
             //itemAdapter.addItem(newItem)
 
             println("-------")
