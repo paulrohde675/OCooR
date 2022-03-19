@@ -17,23 +17,31 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ocoor.Adapter.ItemAdapter
 import com.example.ocoor.Utils.Item
 import com.example.ocoor.Utils.ItemViewModel
 import com.example.ocoor.databinding.MainActivityBinding
+import com.example.ocoor.databinding.MainFragmentBinding
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
+import kotlinx.android.synthetic.main.main_activity.*
+import kotlinx.android.synthetic.main.main_fragment.view.*
 import java.io.File
 
 
@@ -41,11 +49,12 @@ class MainActivity : AppCompatActivity() {
 
     // views
     private lateinit var binding: MainActivityBinding
+    private lateinit var binding_frag:MainFragmentBinding
     lateinit var button_capture:Button;
     lateinit var button_gallary:Button;
     lateinit var button_copy:Button;
     lateinit var button_share:Button;
-    //lateinit var message:TextView;
+    lateinit var button_add: FloatingActionButton;
     lateinit var itemRecyclerView:RecyclerView;
 
     // variables
@@ -83,18 +92,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        println("Test 1")
-
         // get view binding
         binding = MainActivityBinding.inflate(layoutInflater)
+        //binding_frag = MainFragmentBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        //setContentView(binding_frag.root)
 
         // get views from binding
         button_capture = binding.buttonCapture
         button_copy = binding.buttonCopy
         button_gallary = binding.buttonGallery
         button_share = binding.buttonShare
+        //button_add = binding.buttonAdd
         //message = binding.textview
         itemRecyclerView = binding.itemRecyclerView
 
@@ -134,10 +144,50 @@ class MainActivity : AppCompatActivity() {
             startActivity(shareIntent)
 
         }
+        // manaualy add Items to List
+        //button_add.setOnClickListener {
+        //    val navHostFragment = binding.navHostFragment
+        //    val navHostController = navHostFragment.findNavController()
+        //    //navHostFragment.
+        //    navHostController.navigate(R.id.MainActivity_to_AddItemFragment)
+        //    findNavController()
+        //}
+        //binding.
 
-        // Database
-        println("Test 01")
-        //mItemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)
+        //val navController = findNavController(R.id.nav_host_fragment)
+// MainActivity : onCreate
+// in my code fab button in the main activity common for all fragment.
+        //floatingActionButton.setOnClickListener {
+        //    navController.navigateUp() // to clear previous navigation history
+        //    navController.navigate(R.id.new_issue)
+        //}
+/*
+        button_add.setOnClickListener {
+            navController.navigateUp() // to clear previous navigation history
+            navController.navigate(R.id.action_mainFragment_to_AddItemFragment)
+            println("Navigate")
+
+            //val navController = binding_frag.navHostFragment.findNavController()
+            val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            val navController = navHostFragment.navController
+            navController.navigate(R.id.MainActivity_to_AddItemFragment)
+
+
+            val action =
+                SpecifyAmountFragmentDirections
+                    .actionSpecifyAmountFragmentToConfirmationFragment()
+            view.findNavController().navigate(action)
+
+            val action =
+            +/
+
+            //MainActivityDirections.
+            //it.findNavController().navigate(MainActivityDirections.mainActivityToAddItemFragment())
+            //it.findNavController().navigate(R.id.MainActivity_to_AddItemFragment)
+        }
+                    */
+
+        //supportFragmentManager.
 
         // get database viewModel
         mItemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)

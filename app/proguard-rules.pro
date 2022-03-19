@@ -21,3 +21,5 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class androidx.appcompat.widget.** { *; }
+-keepnames class androidx.navigation.fragment.NavHostFragment
+-keep class * extends androidx.fragment.app.Fragment{}

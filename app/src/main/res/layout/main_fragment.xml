@@ -5,7 +5,19 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.MainFragment">
+    tools:context=".Fragments.MainFragment">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/button_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="25dp"
+        android:layout_marginTop="0dp"
+        android:backgroundTint="@color/purple_500"
+        android:src="@drawable/ic_baseline_add_24"
+        tools:ignore="ContentDescription" />
+        <!-- android:layout_below="@+id/itemRecyclerView" -->
 
 
 </RelativeLayout>
