@@ -1,22 +1,21 @@
 package com.example.ocoor.Fragments
 
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
-import androidx.navigation.Navigation.findNavController
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.fragment.app.Fragment
 import com.example.ocoor.MainActivity
-import com.example.ocoor.R
 import com.example.ocoor.Utils.Item
 import com.example.ocoor.databinding.FragmentAddItemBinding
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -63,6 +62,21 @@ class AddItemFragment : Fragment() {
         add_item = binding.addItemButton
         edit_text = binding.textInputEditText
 
+        // open up keyboard
+        edit_text.requestFocus()
+
+        if (edit_text.requestFocus()) {
+            println("Req Context")
+            val imm = mainActivity.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            //imm.toggleSoftInput(0, 0);
+            //imm.showSoftInput(edit_text, InputMethodManager.SHOW_IMPLICIT)
+            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,0);
+            val isShowing = imm.showSoftInput(edit_text, InputMethodManager.SHOW_IMPLICIT)
+            if (!isShowing){
+                imm.showSoftInput(edit_text, InputMethodManager.SHOW_IMPLICIT)
+            }
+
+        }
 
         binding.addItemButton.setOnClickListener {
             var text = edit_text.text.toString()

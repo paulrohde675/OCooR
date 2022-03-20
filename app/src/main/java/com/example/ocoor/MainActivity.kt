@@ -102,51 +102,6 @@ class MainActivity : AppCompatActivity() {
         // hide actionbar
         supportActionBar?.hide()
 
-        // manaualy add Items to List
-        //button_add.setOnClickListener {
-        //    val navHostFragment = binding.navHostFragment
-        //    val navHostController = navHostFragment.findNavController()
-        //    //navHostFragment.
-        //    navHostController.navigate(R.id.MainActivity_to_AddItemFragment)
-        //    findNavController()
-        //}
-        //binding.
-
-        //val navController = findNavController(R.id.nav_host_fragment)
-// MainActivity : onCreate
-// in my code fab button in the main activity common for all fragment.
-        //floatingActionButton.setOnClickListener {
-        //    navController.navigateUp() // to clear previous navigation history
-        //    navController.navigate(R.id.new_issue)
-        //}
-/*
-        button_add.setOnClickListener {
-            navController.navigateUp() // to clear previous navigation history
-            navController.navigate(R.id.action_mainFragment_to_AddItemFragment)
-            println("Navigate")
-
-            //val navController = binding_frag.navHostFragment.findNavController()
-            val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-            val navController = navHostFragment.navController
-            navController.navigate(R.id.MainActivity_to_AddItemFragment)
-
-
-            val action =
-                SpecifyAmountFragmentDirections
-                    .actionSpecifyAmountFragmentToConfirmationFragment()
-            view.findNavController().navigate(action)
-
-            val action =
-            +/
-
-            //MainActivityDirections.
-            //it.findNavController().navigate(MainActivityDirections.mainActivityToAddItemFragment())
-            //it.findNavController().navigate(R.id.MainActivity_to_AddItemFragment)
-        }
-                    */
-
-        //supportFragmentManager.
-
         // get database viewModel
         mItemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)
 

@@ -52,7 +52,6 @@ class MainFragment : Fragment() {
         button_add = binding.buttonAdd
 
         button_add.setOnClickListener(){
-            println("klick")
             findNavController().navigate(R.id.action_mainFragment_to_AddItemFragment)
         }
 
