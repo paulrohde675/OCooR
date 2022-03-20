@@ -50,11 +50,6 @@ class MainActivity : AppCompatActivity() {
     // views
     private lateinit var binding: MainActivityBinding
     private lateinit var binding_frag:MainFragmentBinding
-    lateinit var button_capture:Button;
-    lateinit var button_gallary:Button;
-    lateinit var button_copy:Button;
-    lateinit var button_share:Button;
-    lateinit var button_add: FloatingActionButton;
     lateinit var itemRecyclerView:RecyclerView;
 
     // variables
@@ -74,7 +69,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var itemAdapter:ItemAdapter
 
     // data_base
-    private lateinit var mItemViewModel: ItemViewModel
+    lateinit var mItemViewModel: ItemViewModel
 
     // permissions
     val requestPermissionLauncher =
@@ -99,11 +94,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(view)
         //setContentView(binding_frag.root)
 
-        // get views from binding
-        button_capture = binding.buttonCapture
-        button_copy = binding.buttonCopy
-        button_gallary = binding.buttonGallery
-        button_share = binding.buttonShare
+
         //button_add = binding.buttonAdd
         //message = binding.textview
         itemRecyclerView = binding.itemRecyclerView
@@ -111,39 +102,6 @@ class MainActivity : AppCompatActivity() {
         // hide actionbar
         supportActionBar?.hide()
 
-        // buttons
-        //------------------------------------------------------------------------------------------
-        // button to take picture witch camera
-        button_capture.setOnClickListener{
-
-            // get permission to sue camera
-            if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
-                requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
-            }
-            onLaunchCamera()
-        }
-        // button to pick pickture from galery
-        button_gallary.setOnClickListener {
-            pickFromGallery()
-        }
-        // button to copy the scanned text to clipboard
-        button_copy.setOnClickListener {
-            copyToClipBoard(scanned_text)
-        }
-
-        // button to share scanned text to other apps
-        button_share.setOnClickListener {
-
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, scanned_text)
-                type = "text/plain"
-            }
-
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
-
-        }
         // manaualy add Items to List
         //button_add.setOnClickListener {
         //    val navHostFragment = binding.navHostFragment
@@ -292,7 +250,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun pickFromGallery() {
+    fun pickFromGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         intent.type = "image/*"
         val mimeTypes = arrayOf("image/jpeg", "image/png", "image/jpg")
@@ -301,7 +259,7 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, GALLERY_REQUEST_CODE)
     }
 
-    private fun copyToClipBoard(text:String){
+    fun copyToClipBoard(text:String){
         val clipboard:ClipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip:ClipData = ClipData.newPlainText("Copied data", text)
         clipboard.setPrimaryClip(clip)

@@ -2,14 +2,15 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/MainActivity">
+    android:id="@+id/MainActivity"
+>
 
     <data>
     </data>
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
 
         <fragment
             android:id="@+id/nav_host_fragment"
@@ -39,60 +40,16 @@
             android:id="@+id/itemRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/button_capture"
             android:layout_below="@+id/Title"
             android:layout_marginStart="25dp"
             android:layout_marginTop="50dp"
             android:layout_marginEnd="25dp"
-            android:layout_marginBottom="60dp"
+            android:layout_marginBottom="180dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager">
 
 
         </androidx.recyclerview.widget.RecyclerView>
 
-    <Button
-        android:id="@+id/button_capture"
-        android:layout_width="@dimen/button_width"
-        android:layout_height="@dimen/button_hight"
-        android:layout_above="@+id/button_copy"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="20dp"
-        android:text="Capture" />
-
-    <Button
-        android:id="@+id/button_copy"
-        android:layout_width="@dimen/button_width"
-        android:layout_height="@dimen/button_hight"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="10dp"
-        android:text="Copy" />
-
-    <Button
-        android:id="@+id/button_gallery"
-        android:layout_width="@dimen/button_width"
-        android:layout_height="@dimen/button_hight"
-        android:layout_above="@+id/button_share"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="20dp"
-        android:text="Gallery" />
-
-    <Button
-        android:id="@+id/button_share"
-        android:layout_width="@dimen/button_width"
-        android:layout_height="@dimen/button_hight"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="10dp"
-        android:text="Share" />
 
     </RelativeLayout>
 
