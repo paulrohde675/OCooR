@@ -111,6 +111,7 @@ class MainActivity : AppCompatActivity() {
         itemRecyclerView.layoutManager = LinearLayoutManager(this)
         itemRecyclerView.adapter = itemAdapter
 
+
         // Upate recylerView whenever the datase is modified
         mItemViewModel.readAllData.observe(this, Observer { items ->
             itemAdapter.setData(items.filter {item -> item.status == "False" })

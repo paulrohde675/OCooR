@@ -26,6 +26,14 @@ class ItemViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    fun addItemList(items : List<Item>){
+        viewModelScope.launch (Dispatchers.IO){
+            for (item in items){
+                repository.addItem(item)
+            }
+        }
+    }
+
     fun rmItem(user: Item){
         viewModelScope.launch (Dispatchers.IO){
             repository.rmItem(user)

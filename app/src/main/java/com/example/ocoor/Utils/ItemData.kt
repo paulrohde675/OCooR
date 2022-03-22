@@ -5,7 +5,7 @@ import androidx.room.*
 
 @Entity
 data class Item(
-    @PrimaryKey(autoGenerate = true) val id: Int, //
+    @PrimaryKey(autoGenerate = true) var id: Int, //
     @ColumnInfo(name = "first_name") var status: String?,
     @ColumnInfo(name = "last_name") val itemText: String?
 )
@@ -23,9 +23,9 @@ interface ItemDao {
     fun findByName(first: String, last: String): Item
 
     @Insert(onConflict = OnConflictStrategy.REPLACE) //REPLACE //IGNORE
-    suspend fun addItem(item: Item)
+    fun addItem(item: Item)
 
-    @Query("SELECT * FROM item ORDER BY id ASC")
+    @Query("SELECT * FROM item ORDER BY id DESC")
     fun readAllData(): LiveData<List<Item>>
 
     //@Update
