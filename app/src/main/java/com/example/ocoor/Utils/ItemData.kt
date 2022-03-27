@@ -37,6 +37,8 @@ interface ItemDao {
     @Query("DELETE FROM item")
     suspend fun deleteAllItems()
 
+    @Query("SELECT COUNT(id) FROM item")
+    fun getCount(): Int
 }
 
 class ItemRepository(private val itemDao: ItemDao){
@@ -50,9 +52,4 @@ class ItemRepository(private val itemDao: ItemDao){
     suspend fun rmItem(item:Item){
         itemDao.rmItem(item)
     }
-
-    //suspend fun updateItem(item: Item){
-    //    itemDao.updateItem()
-    //}
-
 }

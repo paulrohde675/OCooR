@@ -14,7 +14,6 @@ class ItemViewModel(application: Application): AndroidViewModel(application) {
     private val repository: ItemRepository
 
     init {
-        println("Test")
         val userDao = AppDatabase.getDatabase(application).itemDao()
         repository = ItemRepository(userDao)
         readAllData = repository.readAllData

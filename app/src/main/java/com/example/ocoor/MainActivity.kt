@@ -2,9 +2,11 @@ package com.example.ocoor
 
 
 import android.annotation.SuppressLint
-import android.content.*
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.ContentValues.TAG
-import android.content.pm.PackageManager
+import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -14,34 +16,27 @@ import android.os.Environment
 import android.os.Parcelable
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ocoor.Adapter.ItemAdapter
 import com.example.ocoor.Utils.Item
 import com.example.ocoor.Utils.ItemViewModel
+import com.example.ocoor.Utils.SettingData
+import com.example.ocoor.Utils.SettingViewModel
 import com.example.ocoor.databinding.MainActivityBinding
 import com.example.ocoor.databinding.MainFragmentBinding
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
-import kotlinx.android.synthetic.main.main_activity.*
-import kotlinx.android.synthetic.main.main_fragment.view.*
 import java.io.File
 
 
@@ -58,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     // intent codes
     private val GALLERY_REQUEST_CODE = 1234
-    private val REQUEST_IMAGE_CAPTURE = 1
+    //private val REQUEST_IMAGE_CAPTURE = 1
     private val CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034
 
     val APP_TAG = "MyCustomApp"
@@ -70,6 +65,7 @@ class MainActivity : AppCompatActivity() {
 
     // data_base
     lateinit var mItemViewModel: ItemViewModel
+    lateinit var settingViewModel: SettingViewModel
 
     // permissions
     val requestPermissionLauncher =
@@ -84,6 +80,12 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    private fun doesDatabaseExist(context: Context, dbName: String): Boolean {
+        val dbFile = context.getDatabasePath(dbName)
+        println(dbFile)
+        return dbFile.exists()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -92,21 +94,21 @@ class MainActivity : AppCompatActivity() {
         //binding_frag = MainFragmentBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        //setContentView(binding_frag.root)
-
-
-        //button_add = binding.buttonAdd
-        //message = binding.textview
-        itemRecyclerView = binding.itemRecyclerView
 
         // hide actionbar
         supportActionBar?.hide()
 
-        // get database viewModel
-        mItemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)
+        // get setting database viewModel
+        settingViewModel = ViewModelProvider(this).get(SettingViewModel::class.java)
+
+        settingViewModel.readAllData.observe(this, Observer { settings ->
+            println("Change Setting 101")
+            println(settings?.ocr_type)
+        })
 
         // recycler view
         //------------------------------------------------------------------------------------------
+        itemRecyclerView = binding.itemRecyclerView
         itemAdapter = ItemAdapter(mutableListOf(), mItemViewModel)
         itemRecyclerView.layoutManager = LinearLayoutManager(this)
         itemRecyclerView.adapter = itemAdapter
@@ -387,13 +389,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-    // functions to interact with database
-    private fun deleteItem(){
-
-
-
-    }
 }
 
 
