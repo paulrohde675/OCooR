@@ -85,6 +85,7 @@ class AddItemFragment : Fragment() {
             }
             else{
                 mainActivity.mItemViewModel.addItem(Item(id=0, status="False", itemText=text))
+                edit_text.text.clear()
             }
         }
 

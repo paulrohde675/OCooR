@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ocoor.Adapter.ItemAdapter
+import com.example.ocoor.Units.BaseUnit
 import com.example.ocoor.Utils.Item
 import com.example.ocoor.Utils.ItemViewModel
 import com.example.ocoor.Utils.SettingData
@@ -106,13 +107,15 @@ class MainActivity : AppCompatActivity() {
             println(settings?.ocr_type)
         })
 
-        // recycler view
+        // get main database viewModel
+        mItemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)
+
+        // init recycler view
         //------------------------------------------------------------------------------------------
         itemRecyclerView = binding.itemRecyclerView
         itemAdapter = ItemAdapter(mutableListOf(), mItemViewModel)
         itemRecyclerView.layoutManager = LinearLayoutManager(this)
         itemRecyclerView.adapter = itemAdapter
-
 
         // Upate recylerView whenever the datase is modified
         mItemViewModel.readAllData.observe(this, Observer { items ->
@@ -344,21 +347,21 @@ class MainActivity : AppCompatActivity() {
             //newItem.itemText = block.text
             mItemViewModel.addItem(Item(id=0, status="False", itemText=block.text))
             //itemAdapter.addItem(newItem)
-
-            println("-------")
-            println("Block")
-            println(blockText)
+            //println("-------")
+            //println("Block")
+            //println(blockText)
             for (line in block.lines) {
                 val lineText = line.text
                 val lineCornerPoints = line.cornerPoints
                 val lineFrame = line.boundingBox
-                //println("-------")
+                println("-------")
                 //println("Line")
                 //println(lineText)
                 for (element in line.elements) {
                     val elementText = element.text
                     val elementCornerPoints = element.cornerPoints
                     val elementFrame = element.boundingBox
+                    println("${element.text} is Unit ${BaseUnit().isUnit(elementText)}" )
                 }
             }
         }
