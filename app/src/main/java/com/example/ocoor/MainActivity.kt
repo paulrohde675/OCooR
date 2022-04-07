@@ -345,7 +345,9 @@ class MainActivity : AppCompatActivity() {
             // add new item to recyclerView from text block
             //val newItem:ItemModel = ItemModel()
             //newItem.itemText = block.text
-            mItemViewModel.addItem(Item(id=0, status="False", itemText=block.text))
+
+            val item = Item(id=0, status="False", itemText=block.text)
+
             //itemAdapter.addItem(newItem)
             //println("-------")
             //println("Block")
@@ -355,14 +357,31 @@ class MainActivity : AppCompatActivity() {
                 val lineCornerPoints = line.cornerPoints
                 val lineFrame = line.boundingBox
                 println("-------")
-                //println("Line")
-                //println(lineText)
+
+                // Seperate string into amount -- unit -- good
                 for (element in line.elements) {
                     val elementText = element.text
                     val elementCornerPoints = element.cornerPoints
                     val elementFrame = element.boundingBox
-                    println("${element.text} is Unit ${BaseUnit().isUnit(elementText)}" )
+
+                    if(elementText.toFloatOrNull() != null){
+                        item.amount = elementText.toFloat()
+                        println("amount: $elementText (${item.amount})")
+                    }
+                    else if(BaseUnit.isUnit(elementText)) {
+                        item.unit = elementText
+                        println("unit: $elementText (${item.unit})")
+                    } else {
+                        item.good += "$elementText "
+                        println("good: $elementText (${item.good})")
+                    }
                 }
+            }
+
+            // try to merge item with list
+            if(!mItemViewModel.mergeItemWithList(item)){
+                // else: add Item to database
+                mItemViewModel.addItem(item)
             }
         }
 

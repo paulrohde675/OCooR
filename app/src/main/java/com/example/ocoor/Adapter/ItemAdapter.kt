@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ocoor.Utils.Item
 import com.example.ocoor.Utils.ItemViewModel
 import com.example.ocoor.databinding.ItemLayoutBinding
+import java.text.DecimalFormat
 import java.util.*
 
 
@@ -43,10 +44,14 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel) :
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         // activate drag&drop + swiping
+        val dec = DecimalFormat("#,###.##")
 
         val currentItem = itemList[position]
-        holder.binding.itemTextView.text = currentItem.itemText
+        holder.binding.itemTvUnit.text = currentItem.unit
+        holder.binding.itemTvAmount.text = dec.format(currentItem.amount).toString()
+        holder.binding.itemTvGood.text = currentItem.good
         holder.binding.itemCheckbox.isChecked = currentItem.status.toBoolean()
+        println("New: ${dec.format(currentItem.amount)} ${currentItem.unit} ${currentItem.good}")
 
         // update item when button is checked
         holder.binding.itemCheckbox.setOnClickListener(){
@@ -55,13 +60,10 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel) :
             mItemViewModel.addItem(Item(id=currentItem.id, status="True", itemText=currentItem.itemText))
         }
 
-        holder.binding.itemTextView.setOnLongClickListener {
+        holder.binding.itemTvGood.setOnLongClickListener {
             println("TEST")
             return@setOnLongClickListener true
         }
-
-        holder.binding.itemTextView
-
     }
 
     override fun getItemCount(): Int {

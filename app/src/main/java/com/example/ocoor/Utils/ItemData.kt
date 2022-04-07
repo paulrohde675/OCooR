@@ -6,8 +6,11 @@ import androidx.room.*
 @Entity
 data class Item(
     @PrimaryKey(autoGenerate = true) var id: Int, //
-    @ColumnInfo(name = "first_name") var status: String?,
-    @ColumnInfo(name = "last_name") val itemText: String?
+    @ColumnInfo(name = "status") var status: String = "False",
+    @ColumnInfo(name = "itemText") val itemText: String = "",
+    @ColumnInfo(name = "unit") var unit: String = "",
+    @ColumnInfo(name = "amount") var amount: Float = 1f,
+    @ColumnInfo(name = "good") var good: String = ""
 )
 
 @Dao
@@ -17,10 +20,6 @@ interface ItemDao {
 
     @Query("SELECT * FROM item WHERE id IN (:itemIds)")
     fun loadAllByIds(itemIds: IntArray): List<Item>
-
-    @Query("SELECT * FROM item WHERE first_name LIKE :first AND " +
-            "last_name LIKE :last LIMIT 1")
-    fun findByName(first: String, last: String): Item
 
     @Insert(onConflict = OnConflictStrategy.REPLACE) //REPLACE //IGNORE
     fun addItem(item: Item)
@@ -52,4 +51,5 @@ class ItemRepository(private val itemDao: ItemDao){
     suspend fun rmItem(item:Item){
         itemDao.rmItem(item)
     }
+
 }

@@ -28,17 +28,42 @@
         </CheckBox>
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/item_text_view"
-            android:layout_width="0dp"
+            android:id="@+id/item_tv_good"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/item_checkbox"
+            android:longClickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/item_tv_unit"
+            app:layout_constraintTop_toTopOf="parent"
+            tool:text="sample" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/item_tv_amount"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_toEndOf="@+id/item_checkbox"
+            android:longClickable="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/item_checkbox"
             app:layout_constraintTop_toTopOf="parent"
-            tool:text="sample"
-            android:longClickable="true"/>
+            tool:text="sample" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/item_tv_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="4dp"
+            android:layout_toEndOf="@+id/item_checkbox"
+            android:longClickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/item_tv_amount"
+            app:layout_constraintTop_toTopOf="parent"
+            tool:text="sample" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

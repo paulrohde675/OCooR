@@ -13,8 +13,10 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.example.ocoor.MainActivity
+import com.example.ocoor.Units.BaseUnit
 import com.example.ocoor.Utils.Item
 import com.example.ocoor.databinding.FragmentAddItemBinding
+import java.util.regex.Pattern
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -38,6 +40,10 @@ class AddItemFragment : Fragment() {
 
     // main activity
     lateinit var mainActivity: MainActivity
+
+    // regex pattern
+    var pattern = Pattern.compile(" ")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,12 +85,40 @@ class AddItemFragment : Fragment() {
         }
 
         binding.addItemButton.setOnClickListener {
-            var text = edit_text.text.toString()
-            if (text == "") {
+            val text = edit_text.text.toString()
+
+            // check if string is empty
+            if (text.isNullOrBlank()) {
                 Toast.makeText(mainActivity, "You did not enter a username", Toast.LENGTH_SHORT).show()
-            }
+            } // else: add item
             else{
-                mainActivity.mItemViewModel.addItem(Item(id=0, status="False", itemText=text))
+                val item = Item(id=0)
+                val textSeq = pattern.split(text)
+
+                // Seperate string into amount -- unit -- good
+                for (elementText in textSeq){
+                    if(elementText.toFloatOrNull() != null){
+                        item.amount = elementText.toFloat()
+                        println("amount: $elementText (${item.amount})")
+                    }
+                    else if(BaseUnit.isUnit(elementText)) {
+                        item.unit = elementText
+                        println("unit: $elementText (${item.unit})")
+                    } else {
+                        item.good += "$elementText "
+                        println("good: $elementText (${item.good})")
+                    }
+                }
+
+                // try to merge item with list
+                if(!mainActivity.mItemViewModel.mergeItemWithList(item)){
+                    // else: add Item to database
+                    mainActivity.mItemViewModel.addItem(item)
+                } else {
+                    Toast.makeText(mainActivity, "Merged Item", Toast.LENGTH_SHORT).show()
+                }
+
+                // clear text field
                 edit_text.text.clear()
             }
         }
