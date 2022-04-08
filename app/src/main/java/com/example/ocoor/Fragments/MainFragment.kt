@@ -39,11 +39,12 @@ class MainFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
 
+
         // Inflate the layout for this fragment
         // get view binding
         binding = MainFragmentBinding.inflate(layoutInflater)
-        println("onCreateView")
 
+        /*
         // get views from binding
         button_capture = binding.buttonCapture
         button_copy = binding.buttonCopy
@@ -91,7 +92,7 @@ class MainFragment : Fragment() {
 
         }
 
-
+        */
         return binding.root
     }
 }

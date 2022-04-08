@@ -7,6 +7,7 @@ import android.content.ClipboardManager
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -19,25 +20,31 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ocoor.Adapter.ItemAdapter
+import com.example.ocoor.Fragments.AddItemFragment
 import com.example.ocoor.Units.BaseUnit
 import com.example.ocoor.Utils.Item
 import com.example.ocoor.Utils.ItemViewModel
 import com.example.ocoor.Utils.SettingData
 import com.example.ocoor.Utils.SettingViewModel
+import com.example.ocoor.databinding.FragmentAddItemBinding
 import com.example.ocoor.databinding.MainActivityBinding
 import com.example.ocoor.databinding.MainFragmentBinding
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
+import kotlinx.android.synthetic.main.main_activity.*
 import java.io.File
 
 
@@ -46,6 +53,9 @@ class MainActivity : AppCompatActivity() {
     // views
     private lateinit var binding: MainActivityBinding
     private lateinit var binding_frag:MainFragmentBinding
+    private lateinit var binding_add_item_frag:FragmentAddItemBinding
+
+    lateinit var button_add: FloatingActionButton;
     lateinit var itemRecyclerView:RecyclerView;
 
     // variables
@@ -80,19 +90,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
-    private fun doesDatabaseExist(context: Context, dbName: String): Boolean {
-        val dbFile = context.getDatabasePath(dbName)
-        println(dbFile)
-        return dbFile.exists()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // get view binding
         binding = MainActivityBinding.inflate(layoutInflater)
         //binding_frag = MainFragmentBinding.inflate(layoutInflater)
+        binding_add_item_frag = FragmentAddItemBinding.inflate(layoutInflater)
+
         val view = binding.root
         setContentView(view)
 
@@ -138,6 +143,75 @@ class MainActivity : AppCompatActivity() {
             }
             else -> {
                 // Handle other intents, such as being started from the home screen
+            }
+        }
+
+        // top app bar buttons
+        topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.button_share -> {
+                    // Handle share icon press
+                    // button to share scanned text to other apps
+                    val sendIntent: Intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, scanned_text)
+                        type = "text/plain"
+                    }
+
+                    val shareIntent = Intent.createChooser(sendIntent, null)
+                    startActivity(shareIntent)
+
+                    Toast.makeText(this, "Share Button", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.button_copy -> {
+                    // Handle copy icon press
+                    // button to copy the scanned text to clipboard
+
+                    copyToClipBoard(scanned_text)
+                    Toast.makeText(this, "Copy Button", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // bottom app bar buttons
+        bottomAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.button_cam -> {
+                    // Handle cam icon press
+                    // button to take picture witch camera
+
+                    // get permission to sue camera
+                    if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                        this.requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
+                    }
+                    onLaunchCamera()
+
+                    Toast.makeText(this, "Cam Button", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.button_scan -> {
+                    // Handle scan icon press
+                    pickFromGallery()
+                    Toast.makeText(this, "Scan Button", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // floating action button in bottom bar
+        val add_item_fragment = AddItemFragment()
+        button_add = binding.buttonAdd
+        button_add.setOnClickListener(){
+
+            //open up add_item_fragment
+            supportFragmentManager.beginTransaction().apply {
+                replace(R.id.fl_add_itemd, add_item_fragment)
+                addToBackStack(null)
+                commit()
             }
         }
     }
