@@ -28,12 +28,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ocoor.Adapter.ItemAdapter
+import com.example.ocoor.Fragments.ActiveRecyclerViewFragment
 import com.example.ocoor.Fragments.AddItemFragment
 import com.example.ocoor.Units.BaseUnit
 import com.example.ocoor.Utils.*
-import com.example.ocoor.databinding.FragmentAddItemBinding
-import com.example.ocoor.databinding.MainActivityBinding
-import com.example.ocoor.databinding.MainFragmentBinding
+import com.example.ocoor.databinding.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
@@ -43,7 +42,7 @@ import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.main_activity.*
 import java.io.File
-import java.util.*
+//import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -52,8 +51,9 @@ class MainActivity : AppCompatActivity() {
 
     // views
     private lateinit var binding: MainActivityBinding
-    private lateinit var binding_frag:MainFragmentBinding
+    private lateinit var binding_main_frag:MainFragmentBinding
     private lateinit var binding_add_item_frag:FragmentAddItemBinding
+    private lateinit var binding_active_recyler_view_frag:ActiveRecyclerViewFragmentBinding
 
     lateinit var button_add: FloatingActionButton;
     lateinit var itemRecyclerView:RecyclerView;
@@ -95,8 +95,11 @@ class MainActivity : AppCompatActivity() {
 
         // get view binding
         binding = MainActivityBinding.inflate(layoutInflater)
-        //binding_frag = MainFragmentBinding.inflate(layoutInflater)
+        binding_main_frag = MainFragmentBinding.inflate(layoutInflater)
         binding_add_item_frag = FragmentAddItemBinding.inflate(layoutInflater)
+        binding_active_recyler_view_frag = ActiveRecyclerViewFragmentBinding.inflate(layoutInflater)
+        button_add = binding.buttonAdd
+
 
         val view = binding.root
         setContentView(view)
@@ -115,16 +118,19 @@ class MainActivity : AppCompatActivity() {
         // get main database viewModel
         mItemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)
 
-        // init recycler view
-        //------------------------------------------------------------------------------------------
-        itemRecyclerView = binding.itemRecyclerView
-        itemAdapter = ItemAdapter(mutableListOf(), mItemViewModel)
-        itemRecyclerView.layoutManager = LinearLayoutManager(this)
-        itemRecyclerView.adapter = itemAdapter
+        // Set Fragments
+        //-----------------------------------------------------------
+        //set active_recycler_view_fragment
+        val activeRecyclerViewFragment = ActiveRecyclerViewFragment()
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fl_main, activeRecyclerViewFragment)
+            commit()
+            println("Init Fragment")
+        }
 
         // Upate recylerView whenever the datase is modified
-        mItemViewModel.readAllData.observe(this, Observer { items ->
-            itemAdapter.setData(items.filter {item -> item.status == "False" })
+         mItemViewModel.readAllData.observe(this, Observer { items ->
+             activeRecyclerViewFragment.itemAdapter.setData(items.filter {item -> item.status == "False" })
         })
 
         // handle incomming data from other apps
@@ -212,13 +218,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         // floating action button in bottom bar
-        val add_item_fragment = AddItemFragment()
-        button_add = binding.buttonAdd
+        val addItemFragment = AddItemFragment()
         button_add.setOnClickListener(){
 
             //open up add_item_fragment
             supportFragmentManager.beginTransaction().apply {
-                replace(R.id.fl_add_itemd, add_item_fragment)
+                replace(R.id.fl_add_itemd, addItemFragment)
                 addToBackStack(null)
                 commit()
             }

@@ -19,20 +19,7 @@ import com.example.ocoor.databinding.FragmentAddItemBinding
 import java.util.ArrayList
 import java.util.regex.Pattern
 
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//private const val ARG_PARAM1 = "param1"
-//private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [AddItemFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AddItemFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-
 
     // views
     private lateinit var binding: FragmentAddItemBinding
@@ -41,19 +28,6 @@ class AddItemFragment : Fragment() {
 
     // main activity
     lateinit var mainActivity: MainActivity
-
-    // regex pattern
-    var pattern = Pattern.compile(" ")
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            //param1 = it.getString(ARG_PARAM1)
-            //param2 = it.getString(ARG_PARAM2)
-        }
-        println("onCreate Frag")
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -95,34 +69,6 @@ class AddItemFragment : Fragment() {
                 val textSeq = text.split(" ").toTypedArray()
                 //val textSeq = pattern.split(text).toTypedArray()
                 mainActivity.text2Item(textSeq)
-                /*
-                val item = Item(id=0)
-                val textSeq = pattern.split(text)
-
-                // Seperate string into amount -- unit -- good
-                for (elementText in textSeq){
-                    if(elementText.toFloatOrNull() != null){
-                        item.amount = elementText.toFloat()
-                        println("amount: $elementText (${item.amount})")
-                    }
-                    else if(BaseUnit.isUnit(elementText)) {
-                        item.unit = elementText
-                        println("unit: $elementText (${item.unit})")
-                    } else {
-                        item.good += "$elementText "
-                        println("good: $elementText (${item.good})")
-                    }
-                }
-
-                // try to merge item with list
-                if(!mainActivity.mItemViewModel.mergeItemWithList(item)){
-                    // else: add Item to database
-                    mainActivity.mItemViewModel.addItem(item)
-                } else {
-                    Toast.makeText(mainActivity, "Merged Item", Toast.LENGTH_SHORT).show()
-                }
-                */
-                // clear text field
                 edit_text.text.clear()
             }
         }

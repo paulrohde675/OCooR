@@ -27,13 +27,6 @@ class MainFragment : Fragment() {
 
     // views
     private lateinit var binding: MainFragmentBinding
-    lateinit var button_capture: Button;
-    lateinit var button_gallary: Button;
-    lateinit var button_copy: Button;
-    lateinit var button_share: Button;
-    lateinit var button_add: FloatingActionButton;
-    //private lateinit var viewModel: MainViewModel
-
     lateinit var mainActivity: MainActivity
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -44,55 +37,11 @@ class MainFragment : Fragment() {
         // get view binding
         binding = MainFragmentBinding.inflate(layoutInflater)
 
-        /*
-        // get views from binding
-        button_capture = binding.buttonCapture
-        button_copy = binding.buttonCopy
-        button_gallary = binding.buttonGallery
-        button_share = binding.buttonShare
-        button_add = binding.buttonAdd
-
-        button_add.setOnClickListener(){
-            findNavController().navigate(R.id.action_mainFragment_to_AddItemFragment)
-        }
-
-        mainActivity = requireActivity() as MainActivity
-
-        // buttons
-        //------------------------------------------------------------------------------------------
-        // button to take picture witch camera
-        button_capture.setOnClickListener{
-
-            // get permission to sue camera
-            if(ContextCompat.checkSelfPermission(mainActivity, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
-                mainActivity.requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
-            }
-            mainActivity.onLaunchCamera()
-        }
-        // button to pick pickture from galery
-        button_gallary.setOnClickListener {
-            mainActivity.pickFromGallery()
-        }
-        // button to copy the scanned text to clipboard
-        button_copy.setOnClickListener {
-            mainActivity.copyToClipBoard(mainActivity.scanned_text)
-        }
-
-        // button to share scanned text to other apps
-        button_share.setOnClickListener {
-
-            val sendIntent: Intent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, mainActivity.scanned_text)
-                type = "text/plain"
-            }
-
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
-
-        }
-
-        */
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        println("View created")
     }
 }
