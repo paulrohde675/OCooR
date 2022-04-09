@@ -16,5 +16,13 @@
         android:contentDescription="Test1"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/button_mic"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_mic_24"
+        android:title="@string/scan_icon"
+        android:contentDescription="Test1"
+        app:showAsAction="always" />
+
 </menu>
 

@@ -9,6 +9,7 @@ import com.example.ocoor.Units.BaseUnit
 import com.google.android.gms.common.internal.FallbackServiceBroker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okio.utf8Size
 
 class ItemViewModel(application: Application): AndroidViewModel(application) {
 
@@ -73,7 +74,7 @@ class ItemViewModel(application: Application): AndroidViewModel(application) {
                 }
             }
         }
-        println("Mult: $multMerges")
+
         if ((matchItem != null) && !multMerges){
             // check if unit is the same
             // todo: if unit is not the same, change it!
@@ -134,8 +135,14 @@ class ItemViewModel(application: Application): AndroidViewModel(application) {
         }
 
         //compare words
-        if(good1.lowercase().contains(goodName2)){
-            return(good1)
+        if(good1.lowercase().contains(goodName2) or goodName2.contains(goodName1)){
+
+            // return the longer one (assuming the longer probaly is the plural)
+            if(good1.utf8Size() > good2.utf8Size())
+                return(good1)
+            else {
+                return(good2)
+            }
         }
         else if(goodName2.contains(goodName1)){
             return(good2)

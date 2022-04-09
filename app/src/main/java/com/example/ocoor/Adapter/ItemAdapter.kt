@@ -51,7 +51,7 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel) :
         holder.binding.itemTvAmount.text = dec.format(currentItem.amount).toString()
         holder.binding.itemTvGood.text = currentItem.good
         holder.binding.itemCheckbox.isChecked = currentItem.status.toBoolean()
-        println("New: ${dec.format(currentItem.amount)} ${currentItem.unit} ${currentItem.good}")
+        //println("New: ${dec.format(currentItem.amount)} ${currentItem.unit} ${currentItem.good}")
 
         // update item when button is checked
         holder.binding.itemCheckbox.setOnClickListener(){
@@ -61,7 +61,7 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel) :
         }
 
         holder.binding.itemTvGood.setOnLongClickListener {
-            println("TEST")
+            println("TEST long klick")
             return@setOnLongClickListener true
         }
     }

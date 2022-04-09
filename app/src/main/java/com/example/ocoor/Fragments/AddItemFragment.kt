@@ -16,6 +16,7 @@ import com.example.ocoor.MainActivity
 import com.example.ocoor.Units.BaseUnit
 import com.example.ocoor.Utils.Item
 import com.example.ocoor.databinding.FragmentAddItemBinding
+import java.util.ArrayList
 import java.util.regex.Pattern
 
 
@@ -54,7 +55,6 @@ class AddItemFragment : Fragment() {
         println("onCreate Frag")
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -92,6 +92,10 @@ class AddItemFragment : Fragment() {
                 Toast.makeText(mainActivity, "You did not enter a username", Toast.LENGTH_SHORT).show()
             } // else: add item
             else{
+                val textSeq = text.split(" ").toTypedArray()
+                //val textSeq = pattern.split(text).toTypedArray()
+                mainActivity.text2Item(textSeq)
+                /*
                 val item = Item(id=0)
                 val textSeq = pattern.split(text)
 
@@ -117,7 +121,7 @@ class AddItemFragment : Fragment() {
                 } else {
                     Toast.makeText(mainActivity, "Merged Item", Toast.LENGTH_SHORT).show()
                 }
-
+                */
                 // clear text field
                 edit_text.text.clear()
             }

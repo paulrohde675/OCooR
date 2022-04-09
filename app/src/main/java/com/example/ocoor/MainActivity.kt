@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.Parcelable
 import android.provider.MediaStore
+import android.speech.RecognizerIntent
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -24,16 +25,12 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ocoor.Adapter.ItemAdapter
 import com.example.ocoor.Fragments.AddItemFragment
 import com.example.ocoor.Units.BaseUnit
-import com.example.ocoor.Utils.Item
-import com.example.ocoor.Utils.ItemViewModel
-import com.example.ocoor.Utils.SettingData
-import com.example.ocoor.Utils.SettingViewModel
+import com.example.ocoor.Utils.*
 import com.example.ocoor.databinding.FragmentAddItemBinding
 import com.example.ocoor.databinding.MainActivityBinding
 import com.example.ocoor.databinding.MainFragmentBinding
@@ -46,6 +43,9 @@ import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.main_activity.*
 import java.io.File
+import java.util.*
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 
 class MainActivity : AppCompatActivity() {
@@ -198,6 +198,15 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Scan Button", Toast.LENGTH_SHORT).show()
                     true
                 }
+                R.id.button_mic -> {
+                    // Handle speech to text
+                    val s2t = SpeechRecognizerModule(this)
+                    s2t.askSpeechInput()
+
+                    Toast.makeText(this, "Speech to Text", Toast.LENGTH_SHORT).show()
+                    true
+                }
+
                 else -> false
             }
         }
@@ -349,6 +358,12 @@ class MainActivity : AppCompatActivity() {
                     Log.e(TAG, "Image selection Error")
                 }
             }
+            SpeechRecognizerModule(this).RQ_SPEECH_REC -> {
+                val t2s_result : Array<String>? = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.toTypedArray()
+                val textSeq = t2s_result?.get(0)?.split(" ")?.toTypedArray()
+                println("t2s: ${t2s_result?.get(0).toString()}")
+                text2Item(textSeq)
+            }
         }
     }
 
@@ -412,31 +427,19 @@ class MainActivity : AppCompatActivity() {
         // [START mlkit_process_text_block]
         val resultText = result.text
         for (block in result.textBlocks) {
-            val blockText = block.text
-            val blockCornerPoints = block.cornerPoints
-            val blockFrame = block.boundingBox
+            val edit_text = block.text
+            val textSeq = edit_text.split(" ").toTypedArray()
+            text2Item(textSeq)
 
-            // add new item to recyclerView from text block
-            //val newItem:ItemModel = ItemModel()
-            //newItem.itemText = block.text
-
+            /*
             val item = Item(id=0, status="False", itemText=block.text)
-
-            //itemAdapter.addItem(newItem)
-            //println("-------")
-            //println("Block")
-            //println(blockText)
             for (line in block.lines) {
-                val lineText = line.text
-                val lineCornerPoints = line.cornerPoints
-                val lineFrame = line.boundingBox
                 println("-------")
 
                 // Seperate string into amount -- unit -- good
+
                 for (element in line.elements) {
                     val elementText = element.text
-                    val elementCornerPoints = element.cornerPoints
-                    val elementFrame = element.boundingBox
 
                     if(elementText.toFloatOrNull() != null){
                         item.amount = elementText.toFloat()
@@ -452,16 +455,75 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+
+            // try to merge item with list
+            if(!mItemViewModel.mergeItemWithList(item)){
+                // else: add Item to database
+                mItemViewModel.addItem(item)
+            }
+            */
+        }
+
+        //message.text = resultText
+        // scanned_text = message.text.toString()
+        // [END mlkit_process_text_block]
+    }
+
+    fun text2Item(textArrayList: Array<String>?){
+
+        val item = Item(id=0, itemText=textArrayList.toString())
+
+        if (textArrayList != null) {
+
+            val splitTextList = mutableListOf<String>()
+            // split amount and unit
+            for (elementText in textArrayList) {
+                println("split ele: $elementText")
+                val matcher: Matcher = Pattern.compile("\\d+|\\D+").matcher(elementText)
+                while (matcher.find()) {
+                    splitTextList.add(matcher.group().trim())
+                    println("Split: ${matcher.group()}")
+                }
+            }
+
+            // check for identical units
+            for (i in 0..splitTextList.lastIndex){
+                /*
+                if(i < splitTextList.lastIndex-1){
+                    val newUnit = BaseUnit.convertEquiUnit("${splitTextList[i]} ${splitTextList[i+1]}".lowercase())
+                    if(newUnit != null){
+                        splitTextList[i] = newUnit
+                        splitTextList[i+1] = ""
+                    }
+                }
+                */
+                println("new unit: ${splitTextList[i]}")
+                val newUnit = BaseUnit.convertEquiUnit(splitTextList[i].lowercase())
+                if(newUnit != null){
+                    splitTextList[i] = newUnit
+                }
+            }
+
+            // sort into amount - unit - good
+            for (elementText in splitTextList) {
+                if(elementText.toFloatOrNull() != null){
+                    item.amount = elementText.toFloat()
+                    println("amount: $elementText (${item.amount})")
+                }
+                else if(BaseUnit.isUnit(elementText.lowercase())) {
+                    item.unit = elementText
+                    println("unit: $elementText (${item.unit})")
+                } else {
+                    item.good += "$elementText "
+                    println("good: $elementText (${item.good})")
+                }
+            }
             // try to merge item with list
             if(!mItemViewModel.mergeItemWithList(item)){
                 // else: add Item to database
                 mItemViewModel.addItem(item)
             }
         }
-
-        //message.text = resultText
-        // scanned_text = message.text.toString()
-        // [END mlkit_process_text_block]
     }
 
     override fun onNewIntent(intent: Intent) {
