@@ -133,6 +133,11 @@ class MainActivity : AppCompatActivity() {
              activeRecyclerViewFragment.itemAdapter.setData(items.filter {item -> item.status == "False" })
         })
 
+        // Upate inactive recylerView whenever the datase is modified
+        mItemViewModel.readAllData.observe(this, Observer { items ->
+            activeRecyclerViewFragment.inactiveItemAdapter.setData(items.filter {item -> item.status == "True" })
+        })
+
         // handle incomming data from other apps
         //------------------------------------------------------------------------------------------
         when {

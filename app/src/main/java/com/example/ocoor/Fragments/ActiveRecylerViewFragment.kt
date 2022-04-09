@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ocoor.Adapter.InactiveItemAdapter
 import com.example.ocoor.Adapter.ItemAdapter
 import com.example.ocoor.MainActivity
 import com.example.ocoor.databinding.ActiveRecyclerViewFragmentBinding
@@ -18,7 +19,9 @@ class ActiveRecyclerViewFragment : Fragment() {
     private lateinit var binding: ActiveRecyclerViewFragmentBinding
 
     lateinit var itemRecyclerView: RecyclerView;
+    lateinit var inactiveItemRecyclerView: RecyclerView;
     lateinit var itemAdapter:ItemAdapter
+    lateinit var inactiveItemAdapter:InactiveItemAdapter
 
     // main activity
     lateinit var mainActivity: MainActivity
@@ -35,6 +38,11 @@ class ActiveRecyclerViewFragment : Fragment() {
         itemAdapter = ItemAdapter(mutableListOf(), mainActivity.mItemViewModel)
         itemRecyclerView.layoutManager = LinearLayoutManager(context)
         itemRecyclerView.adapter = itemAdapter
+
+        inactiveItemRecyclerView = binding.inactiveRecyclerView
+        inactiveItemAdapter = InactiveItemAdapter(mutableListOf(), mainActivity.mItemViewModel)
+        inactiveItemRecyclerView.layoutManager = LinearLayoutManager(context)
+        inactiveItemRecyclerView.adapter = inactiveItemAdapter
 
         return binding.root
     }

@@ -1,8 +1,12 @@
 package com.example.ocoor.Adapter
 
-import android.util.Log
+import android.R
+import android.graphics.Color
+import android.text.style.StrikethroughSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.compose.ui.graphics.Paint
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
@@ -13,11 +17,12 @@ import java.text.DecimalFormat
 import java.util.*
 
 
-class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel) :
-    RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
+class InactiveItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel) :
+    RecyclerView.Adapter<InactiveItemAdapter.ItemViewHolder>() {
 
      // variables
      var mRecyclerView: RecyclerView? = null
+    private val STRIKE_THROUGH_SPAN = StrikethroughSpan()
 
     inner class ItemViewHolder(val binding: ItemLayoutBinding)
         :RecyclerView.ViewHolder(binding.root){
@@ -48,17 +53,23 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel) :
 
         val currentItem = itemList[position]
         holder.binding.itemTvUnit.text = currentItem.unit
+        holder.binding.itemTvUnit.setTextColor(Color.LTGRAY)
+
         holder.binding.itemTvAmount.text = dec.format(currentItem.amount).toString()
+        holder.binding.itemTvAmount.setTextColor(Color.LTGRAY)
+
         holder.binding.itemTvGood.text = currentItem.good
+        holder.binding.itemTvGood.setTextColor(Color.LTGRAY)
+
         holder.binding.itemCheckbox.isChecked = currentItem.status.toBoolean()
-        //println("New: ${dec.format(currentItem.amount)} ${currentItem.unit} ${currentItem.good}")
+        println("New Inactive: am: ${dec.format(currentItem.amount)} unit: ${currentItem.unit} good: ${currentItem.good}")
 
         // update item when button is checked
         holder.binding.itemCheckbox.setOnClickListener(){
 
             itemList[position].status = holder.binding.itemCheckbox.isChecked.toString()
             val newItem = itemList[position]
-            newItem.status = "True"
+            newItem.status = "False"
             mItemViewModel.addItem(newItem)
         }
 
@@ -121,7 +132,8 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel) :
                 viewHolder: RecyclerView.ViewHolder,
                 direction: Int
             ) {
-                // [6] Do something when an item is swiped
+                val pos = viewHolder.adapterPosition
+                mItemViewModel.rmItem(itemList[pos])
             }
 
             override fun clearView(
