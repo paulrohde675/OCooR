@@ -9,6 +9,8 @@
     <color name="white">#FFFFFFFF</color>
 
 
+    <color name="liberty">#6457A6</color>
+    <color name="liberty_dark">#6457A6</color>
     <color name="mintgreen">#8AC926</color>
     <color name="mintgreen_dark">#8AC926</color>
 

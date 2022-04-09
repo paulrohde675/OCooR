@@ -6,8 +6,8 @@
         <item name="colorPrimaryVariant">@color/cyanprocess_dark</item>
         <item name="colorOnPrimary">@color/honeydew</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/mintgreen</item>
-        <item name="colorSecondaryVariant">@color/mintgreen_dark</item>
+        <item name="colorSecondary">@color/liberty</item>
+        <item name="colorSecondaryVariant">@color/liberty_dark</item>
         <item name="colorOnSecondary">@color/honeydew_dark</item>
 
 

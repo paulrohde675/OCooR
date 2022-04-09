@@ -121,7 +121,10 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel) :
                 viewHolder: RecyclerView.ViewHolder,
                 direction: Int
             ) {
-                // [6] Do something when an item is swiped
+                val pos = viewHolder.adapterPosition
+                val newItem = itemList[pos]
+                newItem.status = "True"
+                mItemViewModel.addItem(newItem)
             }
 
             override fun clearView(
