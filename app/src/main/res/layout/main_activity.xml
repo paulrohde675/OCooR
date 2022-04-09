@@ -10,7 +10,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="?attr/colorOnPrimary">
 
         <fragment
             android:id="@+id/nav_host_fragment"
@@ -70,8 +71,8 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:fabAlignmentMode="end"
-                app:menu="@menu/bottom_nav_menu">
-
+                app:menu="@menu/bottom_nav_menu"
+                android:backgroundTint="?attr/colorPrimary">
 
             </com.google.android.material.bottomappbar.BottomAppBar>
 
@@ -79,7 +80,6 @@
                 android:id="@+id/button_add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/purple_500"
                 android:src="@drawable/ic_baseline_add_24"
                 app:layout_anchor="@id/bottomAppBar"
                 tools:ignore="ContentDescription" />
@@ -112,7 +112,8 @@
                 android:layout_height="?attr/actionBarSize"
                 app:menu="@menu/top_nav_menu"
                 app:navigationIcon="@drawable/ic_baseline_menu_24"
-                app:title="@string/app_name" />
+                app:title="@string/app_name"
+                />
 
         </com.google.android.material.appbar.AppBarLayout>
 

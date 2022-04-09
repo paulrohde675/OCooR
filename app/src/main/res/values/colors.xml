@@ -7,4 +7,25 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+
+    <color name="mintgreen">#8AC926</color>
+    <color name="mintgreen_dark">#8AC926</color>
+
+    // red - blue - yellow
+    <color name="honeydew">#EAF2E3</color>
+    <color name="cyanprocess">#08B2E3</color>
+    <color name="redsalsa">#F25757</color>
+    <color name="corn">#F2E863</color>
+
+    <color name="honeydew_light">#EFF5EA</color>
+    <color name="cyanprocess_light">#38CEF8</color>
+    <color name="redsalsa_light">#F68282</color>
+    <color name="corn_light">#F6EE8A</color>
+
+    <color name="honeydew_dark">#B1CE99</color>
+    <color name="cyanprocess_dark">#08AFDD</color>
+    <color name="redsalsa_dark">#F02B2B</color>
+    <color name="corn_dark">#EFE32F</color>
+
 </resources>

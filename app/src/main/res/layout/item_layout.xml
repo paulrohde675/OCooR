@@ -19,7 +19,7 @@
             android:id="@+id/item_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@color/purple_500"
+            android:buttonTint="@color/redsalsa"
             android:paddingStart="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
