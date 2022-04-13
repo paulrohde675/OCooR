@@ -19,28 +19,38 @@ import com.example.ocoor.databinding.FragmentAddItemBinding
 import java.util.ArrayList
 import java.util.regex.Pattern
 
-class AddItemFragment : Fragment() {
+class AddItemFragment: Fragment() {
 
     // views
-    private lateinit var binding: FragmentAddItemBinding
-    private lateinit var add_item: Button;
-    private lateinit var edit_text: EditText;
+    lateinit var binding: FragmentAddItemBinding
+    lateinit var add_item: Button;
+    lateinit var edit_text: EditText;
 
     // main activity
     lateinit var mainActivity: MainActivity
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    // variables
+    var initText = ""
+    var itemID = 0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
 
         mainActivity = requireActivity() as MainActivity
 
+        println("Create AddItem Fragment")
         // Inflate the layout for this fragment
         // get view binding
         binding = FragmentAddItemBinding.inflate(layoutInflater)
         add_item = binding.addItemButton
         edit_text = binding.textInputEditText
+
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         // open up keyboard
         edit_text.requestFocus()
@@ -68,7 +78,7 @@ class AddItemFragment : Fragment() {
             else{
                 val textSeq = text.split(" ").toTypedArray()
                 //val textSeq = pattern.split(text).toTypedArray()
-                mainActivity.text2Item(textSeq)
+                mainActivity.text2Item(textSeq, itemID=itemID)
                 edit_text.text.clear()
             }
         }
@@ -76,23 +86,8 @@ class AddItemFragment : Fragment() {
         return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AddItemFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AddItemFragment().apply {
-                arguments = Bundle().apply {
-                    //putString(ARG_PARAM1, param1)
-                    //putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onStart() {
+        super.onStart()
+        binding.textInputEditText.setText(initText)
     }
 }

@@ -6,6 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ocoor.Fragments.AddItemFragment
+import com.example.ocoor.MainActivity
+import com.example.ocoor.R
 import com.example.ocoor.Utils.Item
 import com.example.ocoor.Utils.ItemViewModel
 import com.example.ocoor.databinding.ItemLayoutBinding
@@ -13,7 +16,7 @@ import java.text.DecimalFormat
 import java.util.*
 
 
-class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel) :
+class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel, val mainActivity: MainActivity) :
     RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
      // variables
@@ -62,9 +65,18 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel) :
             mItemViewModel.addItem(newItem)
         }
 
-        holder.binding.itemTvGood.setOnLongClickListener {
+        holder.binding.clItem.setOnClickListener {
             println("TEST long klick")
-            return@setOnLongClickListener true
+
+             println("Edit Item Text:  ${itemList[position].itemText}")
+            mainActivity.addItemFragment.initText = itemList[position].itemText
+            mainActivity.addItemFragment.itemID = itemList[position].id
+            mainActivity.supportFragmentManager.beginTransaction().apply {
+                 replace(R.id.fl_add_itemd, mainActivity.addItemFragment)
+                 addToBackStack(null)
+                 commit()
+                 //mainActivity.binding_add_item_frag.textInputEditText.setText(itemList[position].itemText)
+             }
         }
     }
 

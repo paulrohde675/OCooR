@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Paint
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ocoor.MainActivity
 import com.example.ocoor.Utils.Item
 import com.example.ocoor.Utils.ItemViewModel
 import com.example.ocoor.databinding.ItemLayoutBinding
@@ -17,7 +18,7 @@ import java.text.DecimalFormat
 import java.util.*
 
 
-class InactiveItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel) :
+class InactiveItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel, mainActivity: MainActivity) :
     RecyclerView.Adapter<InactiveItemAdapter.ItemViewHolder>() {
 
      // variables

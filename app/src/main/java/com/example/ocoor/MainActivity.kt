@@ -52,11 +52,14 @@ class MainActivity : AppCompatActivity() {
     // views
     private lateinit var binding: MainActivityBinding
     private lateinit var binding_main_frag:MainFragmentBinding
-    private lateinit var binding_add_item_frag:FragmentAddItemBinding
+    lateinit var binding_add_item_frag:FragmentAddItemBinding
     private lateinit var binding_active_recyler_view_frag:ActiveRecyclerViewFragmentBinding
 
     lateinit var button_add: FloatingActionButton;
     lateinit var itemRecyclerView:RecyclerView;
+
+    // fragments
+    lateinit var addItemFragment:AddItemFragment
 
     // variables
     lateinit var bitmap: Bitmap
@@ -223,14 +226,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         // floating action button in bottom bar
-        val addItemFragment = AddItemFragment()
+        addItemFragment = AddItemFragment()
         button_add.setOnClickListener(){
+            addItemFragment.initText = ""
 
             //open up add_item_fragment
             supportFragmentManager.beginTransaction().apply {
                 replace(R.id.fl_add_itemd, addItemFragment)
                 addToBackStack(null)
                 commit()
+                //binding_add_item_frag.textInputEditText.setText("")
             }
         }
     }
@@ -479,20 +484,21 @@ class MainActivity : AppCompatActivity() {
         // [END mlkit_process_text_block]
     }
 
-    fun text2Item(textArrayList: Array<String>?){
-
-        val item = Item(id=0, itemText=textArrayList.toString())
+    fun text2Item(textArrayList: Array<String>?, itemID:Int = 0){
 
         if (textArrayList != null) {
+
+            println("New Item String: ${textArrayList.joinToString(" ") }")
+            val item = Item(id=itemID, itemText=textArrayList.joinToString(" "))
 
             val splitTextList = mutableListOf<String>()
             // split amount and unit
             for (elementText in textArrayList) {
-                println("split ele: $elementText")
+                //println("split ele: $elementText")
                 val matcher: Matcher = Pattern.compile("\\d+|\\D+").matcher(elementText)
                 while (matcher.find()) {
                     splitTextList.add(matcher.group().trim())
-                    println("Split: ${matcher.group()}")
+                    //println("Split: ${matcher.group()}")
                 }
             }
 
@@ -507,7 +513,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 */
-                println("new unit: ${splitTextList[i]}")
+                //println("new unit: ${splitTextList[i]}")
                 val newUnit = BaseUnit.convertEquiUnit(splitTextList[i].lowercase())
                 if(newUnit != null){
                     splitTextList[i] = newUnit
@@ -518,14 +524,14 @@ class MainActivity : AppCompatActivity() {
             for (elementText in splitTextList) {
                 if(elementText.toFloatOrNull() != null){
                     item.amount = elementText.toFloat()
-                    println("amount: $elementText (${item.amount})")
+                    //println("amount: $elementText (${item.amount})")
                 }
                 else if(BaseUnit.isUnit(elementText.lowercase())) {
                     item.unit = elementText
-                    println("unit: $elementText (${item.unit})")
+                    //println("unit: $elementText (${item.unit})")
                 } else {
                     item.good += "$elementText "
-                    println("good: $elementText (${item.good})")
+                    //println("good: $elementText (${item.good})")
                 }
             }
             // try to merge item with list

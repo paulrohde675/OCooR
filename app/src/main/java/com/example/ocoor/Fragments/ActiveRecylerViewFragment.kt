@@ -35,12 +35,12 @@ class ActiveRecyclerViewFragment : Fragment() {
         binding = ActiveRecyclerViewFragmentBinding.inflate(layoutInflater)
 
         itemRecyclerView = binding.activeRecyclerView
-        itemAdapter = ItemAdapter(mutableListOf(), mainActivity.mItemViewModel)
+        itemAdapter = ItemAdapter(mutableListOf(), mainActivity.mItemViewModel, mainActivity)
         itemRecyclerView.layoutManager = LinearLayoutManager(context)
         itemRecyclerView.adapter = itemAdapter
 
         inactiveItemRecyclerView = binding.inactiveRecyclerView
-        inactiveItemAdapter = InactiveItemAdapter(mutableListOf(), mainActivity.mItemViewModel)
+        inactiveItemAdapter = InactiveItemAdapter(mutableListOf(), mainActivity.mItemViewModel, mainActivity)
         inactiveItemRecyclerView.layoutManager = LinearLayoutManager(context)
         inactiveItemRecyclerView.adapter = inactiveItemAdapter
 
