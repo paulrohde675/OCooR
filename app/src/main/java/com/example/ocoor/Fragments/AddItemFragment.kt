@@ -5,19 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.example.ocoor.MainActivity
-import com.example.ocoor.Units.BaseUnit
-import com.example.ocoor.Utils.Item
+import com.example.ocoor.R
 import com.example.ocoor.databinding.FragmentAddItemBinding
-import java.util.ArrayList
-import java.util.regex.Pattern
+import kotlinx.android.synthetic.main.active_recycler_view_fragment.*
+
 
 class AddItemFragment: Fragment() {
 
@@ -90,5 +88,19 @@ class AddItemFragment: Fragment() {
     override fun onStart() {
         super.onStart()
         binding.textInputEditText.setText(initText)
+        println("Set inactive rv invisible")
+
+        // Set the inactive recylerView invisible if AddItems is opend
+        val layout : RecyclerView = mainActivity.findViewById(R.id.inactiveRecyclerView)
+        layout.visibility = View.GONE
     }
+
+    override fun onStop() {
+        super.onStop()
+
+        // Set the inactive recylerView visible if AddItems is closed
+        val layout : RecyclerView = mainActivity.findViewById(R.id.inactiveRecyclerView)
+        layout.visibility = View.VISIBLE
+    }
+
 }

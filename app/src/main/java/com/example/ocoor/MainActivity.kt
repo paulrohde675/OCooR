@@ -51,10 +51,10 @@ import java.util.regex.Pattern
 class MainActivity : AppCompatActivity() {
 
     // views
-    private lateinit var binding: MainActivityBinding
-    private lateinit var binding_main_frag:MainFragmentBinding
+    lateinit var binding: MainActivityBinding
+    lateinit var binding_main_frag:MainFragmentBinding
     lateinit var binding_add_item_frag:FragmentAddItemBinding
-    private lateinit var binding_active_recyler_view_frag:ActiveRecyclerViewFragmentBinding
+    lateinit var binding_active_recyler_view_frag:ActiveRecyclerViewFragmentBinding
 
     lateinit var button_add: FloatingActionButton;
     lateinit var itemRecyclerView:RecyclerView;
@@ -237,13 +237,12 @@ class MainActivity : AppCompatActivity() {
             addItemFragment.itemID = 0
 
 
-            //open up add_item_fragment
+            //open up add_item_fragment (if not already open)
             if(getSupportFragmentManager().findFragmentByTag(ADD_ITEM_TAG) !is AddItemFragment){
                 supportFragmentManager.beginTransaction().apply {
                     replace(R.id.fl_add_itemd, addItemFragment, ADD_ITEM_TAG)
                     addToBackStack(null)
                     commit()
-                    //binding_add_item_frag.textInputEditText.setText("")
                 }
             }
         }
