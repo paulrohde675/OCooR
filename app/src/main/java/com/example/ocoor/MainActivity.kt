@@ -12,6 +12,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
+import android.nfc.Tag
 import android.os.Bundle
 import android.os.Environment
 import android.os.Parcelable
@@ -80,6 +81,10 @@ class MainActivity : AppCompatActivity() {
     // data_base
     lateinit var mItemViewModel: ItemViewModel
     lateinit var settingViewModel: SettingViewModel
+
+    // tags
+    val ADD_ITEM_TAG = "ADD_ITEM_TAG"
+    val MOD_ITEM_TAG = "MOD_ITEM_TAG"
 
     // permissions
     val requestPermissionLauncher =
@@ -229,13 +234,17 @@ class MainActivity : AppCompatActivity() {
         addItemFragment = AddItemFragment()
         button_add.setOnClickListener(){
             addItemFragment.initText = ""
+            addItemFragment.itemID = 0
+
 
             //open up add_item_fragment
-            supportFragmentManager.beginTransaction().apply {
-                replace(R.id.fl_add_itemd, addItemFragment)
-                addToBackStack(null)
-                commit()
-                //binding_add_item_frag.textInputEditText.setText("")
+            if(getSupportFragmentManager().findFragmentByTag(ADD_ITEM_TAG) !is AddItemFragment){
+                supportFragmentManager.beginTransaction().apply {
+                    replace(R.id.fl_add_itemd, addItemFragment, ADD_ITEM_TAG)
+                    addToBackStack(null)
+                    commit()
+                    //binding_add_item_frag.textInputEditText.setText("")
+                }
             }
         }
     }
@@ -534,9 +543,14 @@ class MainActivity : AppCompatActivity() {
                     //println("good: $elementText (${item.good})")
                 }
             }
-            // try to merge item with list
-            if(!mItemViewModel.mergeItemWithList(item)){
-                // else: add Item to database
+
+            if(itemID == 0){
+                // try to merge item with list
+                if(!mItemViewModel.mergeItemWithList(item)){
+                    // else: add Item to database
+                    mItemViewModel.addItem(item)
+                }
+            } else { // if there is an itemID it means the item should be overwritten
                 mItemViewModel.addItem(item)
             }
         }
@@ -561,8 +575,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-
 }
 
 

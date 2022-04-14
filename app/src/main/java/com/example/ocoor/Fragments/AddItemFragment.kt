@@ -32,6 +32,7 @@ class AddItemFragment: Fragment() {
     // variables
     var initText = ""
     var itemID = 0
+    var isRunning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -68,15 +68,30 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel, v
         holder.binding.clItem.setOnClickListener {
             println("TEST long klick")
 
-             println("Edit Item Text:  ${itemList[position].itemText}")
-            mainActivity.addItemFragment.initText = itemList[position].itemText
-            mainActivity.addItemFragment.itemID = itemList[position].id
-            mainActivity.supportFragmentManager.beginTransaction().apply {
-                 replace(R.id.fl_add_itemd, mainActivity.addItemFragment)
-                 addToBackStack(null)
-                 commit()
-                 //mainActivity.binding_add_item_frag.textInputEditText.setText(itemList[position].itemText)
-             }
+            if(mainActivity.getSupportFragmentManager().findFragmentByTag(mainActivity.ADD_ITEM_TAG) !is AddItemFragment){
+                println("Edit Item Text:  ${itemList[position].itemText}")
+                mainActivity.addItemFragment.initText = itemList[position].itemText
+                mainActivity.addItemFragment.itemID = itemList[position].id
+
+
+
+                mainActivity.supportFragmentManager.beginTransaction().apply {
+                    replace(R.id.fl_add_itemd, mainActivity.addItemFragment, mainActivity.ADD_ITEM_TAG)
+                    addToBackStack(null)
+                    commit()
+                    //mainActivity.binding_add_item_frag.textInputEditText.setText(itemList[position].itemText)
+                }
+            } else {
+                //mainActivity.supportFragmentManager.beginTransaction().apply {
+                //    mainActivity.supportFragmentManager.popBackStack()
+                //    replace(R.id.fl_add_itemd, mainActivity.addItemFragment, mainActivity.ADD_ITEM_TAG)
+                //    addToBackStack(null)
+                //    commit()
+                //}
+                print("Edit Text Else")
+                mainActivity.addItemFragment.edit_text.setText(itemList[position].itemText)
+                mainActivity.addItemFragment.itemID = itemList[position].id
+            }
         }
     }
 
