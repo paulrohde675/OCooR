@@ -2,6 +2,7 @@ package com.example.ocoor.Fragments
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +31,6 @@ class AddItemFragment: Fragment() {
     // variables
     var initText = ""
     var itemID = 0
-    var isRunning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +44,16 @@ class AddItemFragment: Fragment() {
         add_item = binding.addItemButton
         edit_text = binding.textInputEditText
 
+        // Handel the Enter Key
+        edit_text.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+                // Enter triggers Add Item Button
+                add_item.performClick()
+
+                return@OnKeyListener true
+            }
+            false
+        })
     }
 
     override fun onCreateView(
@@ -75,10 +85,12 @@ class AddItemFragment: Fragment() {
                 Toast.makeText(mainActivity, "You did not enter a username", Toast.LENGTH_SHORT).show()
             } // else: add item
             else{
-                val textSeq = text.split(" ").toTypedArray()
+                val textSeq = text.trim().split(" ").toTypedArray()
                 //val textSeq = pattern.split(text).toTypedArray()
                 mainActivity.text2Item(textSeq, itemID=itemID)
                 edit_text.text.clear()
+                initText = ""
+                itemID = 0
             }
         }
 
