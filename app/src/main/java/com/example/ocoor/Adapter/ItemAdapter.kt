@@ -1,6 +1,5 @@
 package com.example.ocoor.Adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -16,14 +15,19 @@ import java.text.DecimalFormat
 import java.util.*
 
 
-class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel, val mainActivity: MainActivity) :
+class ItemAdapter(
+    var itemList: List<Item>,
+    val mItemViewModel: ItemViewModel,
+    val mainActivity: MainActivity
+) :
     RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
-     // variables
-     var mRecyclerView: RecyclerView? = null
+    // variables
+    var mRecyclerView: RecyclerView? = null
+    var selectedItem: com.google.android.material.card.MaterialCardView? = null
 
-    inner class ItemViewHolder(val binding: ItemLayoutBinding)
-        :RecyclerView.ViewHolder(binding.root){
+    inner class ItemViewHolder(val binding: ItemLayoutBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         //fun bindView(item: Item) {
         //    binding.apply {
         //        itemTextView.text = item.itemText
@@ -41,12 +45,13 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel, v
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         mRecyclerView = recyclerView
+
+        // activate drag&drop + swiping
         ItemTouchHelper(simpleItemTouchCallback).attachToRecyclerView(mRecyclerView)
     }
 
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        // activate drag&drop + swiping
         val dec = DecimalFormat("#,###.##")
 
         val currentItem = itemList[position]
@@ -54,10 +59,9 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel, v
         holder.binding.itemTvAmount.text = dec.format(currentItem.amount).toString()
         holder.binding.itemTvGood.text = currentItem.good
         holder.binding.itemCheckbox.isChecked = currentItem.status.toBoolean()
-        //println("New: ${dec.format(currentItem.amount)} ${currentItem.unit} ${currentItem.good}")
 
         // update item when button is checked
-        holder.binding.itemCheckbox.setOnClickListener(){
+        holder.binding.itemCheckbox.setOnClickListener() {
 
             itemList[position].status = holder.binding.itemCheckbox.isChecked.toString()
             val newItem = itemList[position]
@@ -65,33 +69,57 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel, v
             mItemViewModel.addItem(newItem)
         }
 
-        holder.binding.clItem.setOnClickListener {
-            println("TEST long klick")
+        //
 
-            if(mainActivity.getSupportFragmentManager().findFragmentByTag(mainActivity.ADD_ITEM_TAG) !is AddItemFragment){
-                println("Edit Item Text:  ${itemList[position].itemText}")
+
+        // handle klick on item in RV
+        holder.binding.clItem.setOnClickListener {
+
+            // open AddItemFragment if not already open
+            if (mainActivity.getSupportFragmentManager()
+                    .findFragmentByTag(mainActivity.ADD_ITEM_TAG) !is AddItemFragment
+            ) {
+                // open AddItemFragment with info from item (text and id to override)
                 mainActivity.addItemFragment.initText = itemList[position].itemText
                 mainActivity.addItemFragment.itemID = itemList[position].id
 
-
-
+                // blend in AddItemFragment
                 mainActivity.supportFragmentManager.beginTransaction().apply {
-                    replace(R.id.fl_add_itemd, mainActivity.addItemFragment, mainActivity.ADD_ITEM_TAG)
+                    replace(
+                        R.id.fl_add_itemd,
+                        mainActivity.addItemFragment,
+                        mainActivity.ADD_ITEM_TAG
+                    )
                     addToBackStack(null)
                     commit()
-                    //mainActivity.binding_add_item_frag.textInputEditText.setText(itemList[position].itemText)
                 }
-            } else {
-                //mainActivity.supportFragmentManager.beginTransaction().apply {
-                //    mainActivity.supportFragmentManager.popBackStack()
-                //    replace(R.id.fl_add_itemd, mainActivity.addItemFragment, mainActivity.ADD_ITEM_TAG)
-                //    addToBackStack(null)
-                //    commit()
-                //}
-                print("Edit Text Else")
+            } else { // if AddItem already open: update text in editTexField
                 mainActivity.addItemFragment.edit_text.setText(itemList[position].itemText)
                 mainActivity.addItemFragment.itemID = itemList[position].id
+
             }
+
+            // remove frame if new item is selected
+            //----------------------------------------------
+            deactivateItemFrame()
+
+            // add frame to selected item
+            //----------------------------------------------
+            activateItemFrame(holder.binding.cvItem)
+        }
+    }
+
+    fun activateItemFrame(itemCardView: com.google.android.material.card.MaterialCardView?) {
+        itemCardView?.strokeWidth = 8
+        itemCardView?.invalidate()
+        selectedItem = itemCardView
+    }
+
+    fun deactivateItemFrame() {
+        println("Deselect item: ${selectedItem}")
+        if (selectedItem != null) {
+            selectedItem!!.strokeWidth = 0
+            selectedItem!!.invalidate()
         }
     }
 
@@ -99,9 +127,9 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel, v
         return itemList.size
     }
 
-    fun  Int.toBoolean() = this == 1
+    fun Int.toBoolean() = this == 1
 
-    fun setData(items: List<Item>){
+    fun setData(items: List<Item>) {
         itemList = items.toMutableList()
         notifyDataSetChanged()
     }
@@ -114,7 +142,8 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel, v
             //UP or DOWN or START or END,
             // [2] The allowed directions for swiping items
             //2
-            UP or DOWN, LEFT or RIGHT) {
+            UP or DOWN, LEFT or RIGHT
+        ) {
 
             var start_swap: Int = 9999
             var end_swap: Int = 0
@@ -133,10 +162,10 @@ class ItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemViewModel, v
                 itemList[to].id = dummy_item_id
                 Collections.swap(itemList, from, to)
 
-                if(from < start_swap) start_swap = from
-                if(to < start_swap) start_swap = to
-                if(from > end_swap) start_swap = from
-                if(to > end_swap) start_swap = to
+                if (from < start_swap) start_swap = from
+                if (to < start_swap) start_swap = to
+                if (from > end_swap) start_swap = from
+                if (to > end_swap) start_swap = to
 
                 // [5] Tell the adapter to switch the 2 items
                 adapter?.notifyItemMoved(from, to)

@@ -8,7 +8,7 @@
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/liberty</item>
         <item name="colorSecondaryVariant">@color/liberty_dark</item>
-        <item name="colorOnSecondary">@color/honeydew_dark</item>
+        <item name="colorOnSecondary">@color/white</item>
 
 
         <!-- Status bar color. -->

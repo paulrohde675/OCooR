@@ -90,6 +90,9 @@ class AddItemFragment: Fragment() {
                 mainActivity.text2Item(textSeq, itemID=itemID)
                 edit_text.text.clear()
                 initText = ""
+
+                // deactivate selected item frames
+                mainActivity.activeRecyclerViewFragment.itemAdapter.deactivateItemFrame()
                 itemID = 0
             }
         }
@@ -113,6 +116,10 @@ class AddItemFragment: Fragment() {
         // Set the inactive recylerView visible if AddItems is closed
         val layout : RecyclerView = mainActivity.findViewById(R.id.inactiveRecyclerView)
         layout.visibility = View.VISIBLE
+
+        // deactivate selected item frames
+        mainActivity.activeRecyclerViewFragment.itemAdapter.deactivateItemFrame()
+        itemID = 0
     }
 
 }

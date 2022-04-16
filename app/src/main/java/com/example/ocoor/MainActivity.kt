@@ -1,6 +1,8 @@
 package com.example.ocoor
 
 
+//import java.util.*
+
 import android.annotation.SuppressLint
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -8,25 +10,28 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Resources.Theme
+import android.content.res.TypedArray
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
-import android.nfc.Tag
 import android.os.Bundle
 import android.os.Environment
 import android.os.Parcelable
 import android.provider.MediaStore
 import android.speech.RecognizerIntent
 import android.util.Log
+import android.util.TypedValue
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ocoor.Adapter.ItemAdapter
 import com.example.ocoor.Fragments.ActiveRecyclerViewFragment
@@ -43,7 +48,6 @@ import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.main_activity.*
 import java.io.File
-//import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -61,6 +65,7 @@ class MainActivity : AppCompatActivity() {
 
     // fragments
     lateinit var addItemFragment:AddItemFragment
+    lateinit var activeRecyclerViewFragment:ActiveRecyclerViewFragment
 
     // variables
     lateinit var bitmap: Bitmap
@@ -76,7 +81,7 @@ class MainActivity : AppCompatActivity() {
     var photoFile: File? = null
 
     // adapter
-    lateinit var itemAdapter:ItemAdapter
+    //lateinit var itemAdapter:ItemAdapter
 
     // data_base
     lateinit var mItemViewModel: ItemViewModel
@@ -85,6 +90,9 @@ class MainActivity : AppCompatActivity() {
     // tags
     val ADD_ITEM_TAG = "ADD_ITEM_TAG"
     val MOD_ITEM_TAG = "MOD_ITEM_TAG"
+
+    // colors
+    var myColor : Int = Color.WHITE
 
     // permissions
     val requestPermissionLauncher =
@@ -100,6 +108,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // get colors from theme
+        val typedValue = TypedValue()
+        getTheme().resolveAttribute(com.google.android.material.R.attr.colorOnSecondary, typedValue, true)
+        myColor = typedValue.data
+
 
         // get view binding
         binding = MainActivityBinding.inflate(layoutInflater)
@@ -129,7 +143,7 @@ class MainActivity : AppCompatActivity() {
         // Set Fragments
         //-----------------------------------------------------------
         //set active_recycler_view_fragment
-        val activeRecyclerViewFragment = ActiveRecyclerViewFragment()
+        activeRecyclerViewFragment = ActiveRecyclerViewFragment()
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.fl_main, activeRecyclerViewFragment)
             commit()
@@ -574,6 +588,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    // fetch colors from theme file
+    fun fetchColorOnSecondary(): Int {
+        val typedValue = TypedValue()
+        val a: TypedArray = obtainStyledAttributes(typedValue.data, intArrayOf(com.google.android.material.R.attr.colorOnSecondary))
+        val color = a.getColor(0, 0)
+        a.recycle()
+        return color
+    }
+
 }
 
 
