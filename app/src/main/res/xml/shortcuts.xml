@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This is a sample shortcuts.xml -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <capability android:name="actions.intent.UPDATE_ITEM_LIST">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.example.ocoor"
+            android:targetClass="com.example.ocoor.MainActivity">
+            <!-- Eg. itemListName = "Grocery List" -->
+            <parameter
+                android:name="itemList.name"
+                android:key="itemListName"/>
+            <!-- Eg. itemListElementName = "Milk" -->
+            <parameter
+                android:name="itemList.itemListElement.name"
+                android:key="itemListElementName"/>
+        </intent>
+    </capability>
+</shortcuts>

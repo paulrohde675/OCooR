@@ -4,11 +4,8 @@ package com.example.ocoor
 //import java.util.*
 
 import android.annotation.SuppressLint
-import android.content.ClipData
-import android.content.ClipboardManager
+import android.content.*
 import android.content.ContentValues.TAG
-import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources.Theme
 import android.content.res.TypedArray
@@ -173,6 +170,9 @@ class MainActivity : AppCompatActivity() {
             intent?.action == Intent.ACTION_SEND_MULTIPLE
                     && intent.type?.startsWith("image/") == true -> {
                 handleSendMultipleImages(intent) // Handle multiple images being sent
+            }
+            intent?.action == Intent.ACTION_VIEW  -> {
+                println(" ---> View Intent   <----")
             }
             else -> {
                 // Handle other intents, such as being started from the home screen
