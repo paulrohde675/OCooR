@@ -52,7 +52,7 @@ class ActiveRecyclerViewFragment : Fragment() {
         super.onResume()
 
         // For some reasons it is necessary to add an item, otherwise the recycler view is empty.
-        val item = Item(id=9999999)
+        val item = Item(id=9999999, list_id = 9999999)
         mainActivity.mItemViewModel.addItem(item)
         mainActivity.mItemViewModel.rmItem(item)
     }

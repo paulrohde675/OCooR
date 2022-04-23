@@ -3,6 +3,8 @@ package com.example.ocoor
 
 //import java.util.*
 
+import Bars.BottomBar
+import Bars.TopBar
 import android.annotation.SuppressLint
 import android.content.*
 import android.content.ContentValues.TAG
@@ -60,7 +62,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var binding_active_recyler_view_frag:ActiveRecyclerViewFragmentBinding
     lateinit var list_of_lists_frag:FragmentListOfListsBinding
 
-
     lateinit var button_add: FloatingActionButton;
     lateinit var itemRecyclerView:RecyclerView;
 
@@ -72,6 +73,7 @@ class MainActivity : AppCompatActivity() {
     // variables
     lateinit var bitmap: Bitmap
     var scanned_text:String = ""
+    var selectedListId:Int? = null
 
     // intent codes
     private val GALLERY_REQUEST_CODE = 1234
@@ -131,6 +133,7 @@ class MainActivity : AppCompatActivity() {
         // init fragments
         listOfListsFragment = ListOfListsFragment()
         activeRecyclerViewFragment = ActiveRecyclerViewFragment()
+        addItemFragment = AddItemFragment()
         //listOfListsFragment.initAdapter()
 
         val view = binding.root
@@ -139,12 +142,11 @@ class MainActivity : AppCompatActivity() {
         // hide actionbar
         supportActionBar?.hide()
 
-
-
         // get main database viewModel
         mItemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)
         mItemListViewModel = ViewModelProvider(this).get(ItemListViewModel::class.java)
         settingViewModel = ViewModelProvider(this).get(SettingViewModel::class.java)
+
 
 
         // Set Fragments
@@ -158,18 +160,13 @@ class MainActivity : AppCompatActivity() {
 
         // update recyclerView whenever the database is modified
          mItemViewModel.readAllData.observe(this, Observer { items ->
-             activeRecyclerViewFragment.itemAdapter.setData(items.filter {item -> item.status == "False" })
+             activeRecyclerViewFragment.itemAdapter.setData(items.filter {item -> item.status == "False" && item.list_id == selectedListId})
         })
 
         // update inactive recyclerView whenever the database is modified
         mItemViewModel.readAllData.observe(this, Observer { items ->
-            activeRecyclerViewFragment.inactiveItemAdapter.setData(items.filter {item -> item.status == "True" })
+            activeRecyclerViewFragment.inactiveItemAdapter.setData(items.filter {item -> item.status == "True" && item.list_id == selectedListId})
         })
-
-        // update listOfLists recyclerView whenever the database is modified
-        // mItemListViewModel.readAllData.observe(this, Observer { items ->
-        //    listOfListsFragment.itemListAdapter.setData(items)
-        //})
 
         // update settings recyclerView whenever the database is modified
         settingViewModel.readAllData.observe(this, Observer { settings ->
@@ -177,9 +174,21 @@ class MainActivity : AppCompatActivity() {
             println(settings?.ocr_type)
         })
 
-        //mItemListViewModel.addItemList(ItemList(0, "My First List"))
+        // update settings recyclerView whenever the database is modified
+        mItemListViewModel.readAllData.observe(this, Observer { itemLists ->
+            if (itemLists.isEmpty()){
+                mItemListViewModel.addItemList(ItemList(1, "My List"))
+                selectedListId = 1
+            } else {
+                selectedListId = itemLists.get(0).id
+            }
 
-        // handle incomming data from other apps
+            // this might cause problems
+            // maybe find a different way to only update this once
+            mItemListViewModel.readAllData.removeObservers(this)
+        })
+
+        // handle incoming data from other apps
         //------------------------------------------------------------------------------------------
         when {
             intent?.action == Intent.ACTION_SEND -> {
@@ -201,98 +210,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // top app bar buttons
-        topAppBar.setNavigationOnClickListener{
-            //open up add_item_fragment (if not already open)
-            if(getSupportFragmentManager().findFragmentByTag(LIST_OF_LISTS_TAG) !is AddItemFragment){
-                supportFragmentManager.beginTransaction().apply {
-                    replace(R.id.fl_main, listOfListsFragment, LIST_OF_LISTS_TAG)
-                    addToBackStack(null)
-                    commit()
-                }
-            }
-        }
+        // init top bar
+        TopBar(this).setTopBarMainScreen()
 
-        topAppBar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.button_share -> {
-                    // Handle share icon press
-                    // button to share scanned text to other apps
-                    val sendIntent: Intent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, scanned_text)
-                        type = "text/plain"
-                    }
+        // init bottom bar
+        BottomBar(this).setBottomBarMainScreen()
 
-                    val shareIntent = Intent.createChooser(sendIntent, null)
-                    startActivity(shareIntent)
-
-                    Toast.makeText(this, "Share Button", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                R.id.button_copy -> {
-                    // Handle copy icon press
-                    // button to copy the scanned text to clipboard
-
-                    copyToClipBoard(scanned_text)
-                    Toast.makeText(this, "Copy Button", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                else -> false
-            }
-        }
-
-        // bottom app bar buttons
-        bottomAppBar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.button_cam -> {
-                    // Handle cam icon press
-                    // button to take picture witch camera
-
-                    // get permission to sue camera
-                    if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
-                        this.requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
-                    }
-                    onLaunchCamera()
-
-                    Toast.makeText(this, "Cam Button", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                R.id.button_scan -> {
-                    // Handle scan icon press
-                    pickFromGallery()
-                    Toast.makeText(this, "Scan Button", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                R.id.button_mic -> {
-                    // Handle speech to text
-                    val s2t = SpeechRecognizerModule(this)
-                    s2t.askSpeechInput()
-
-                    Toast.makeText(this, "Speech to Text", Toast.LENGTH_SHORT).show()
-                    true
-                }
-
-                else -> false
-            }
-        }
-
-        // floating action button in bottom bar
-        addItemFragment = AddItemFragment()
-        button_add.setOnClickListener(){
-            addItemFragment.initText = ""
-            addItemFragment.itemID = 0
-
-
-            //open up add_item_fragment (if not already open)
-            if(getSupportFragmentManager().findFragmentByTag(ADD_ITEM_TAG) !is AddItemFragment){
-                supportFragmentManager.beginTransaction().apply {
-                    replace(R.id.fl_add_itemd, addItemFragment, ADD_ITEM_TAG)
-                    addToBackStack(null)
-                    commit()
-                }
-            }
-        }
     }
 
     //----------------------------------------------------------------------------------------------
@@ -543,8 +466,14 @@ class MainActivity : AppCompatActivity() {
 
         if (textArrayList != null) {
 
+            var item:Item? = null
             println("New Item String: ${textArrayList.joinToString(" ") }")
-            val item = Item(id=itemID, itemText=textArrayList.joinToString(" "))
+            if(selectedListId != null){
+                item = Item(id=itemID, itemText=textArrayList.joinToString(" "), list_id = selectedListId!!)
+            } else {
+                Toast.makeText(this,"No List Seleted", Toast.LENGTH_SHORT).show()
+                return
+            }
 
             val splitTextList = mutableListOf<String>()
             // split amount and unit
@@ -578,26 +507,26 @@ class MainActivity : AppCompatActivity() {
             // sort into amount - unit - good
             for (elementText in splitTextList) {
                 if(elementText.toFloatOrNull() != null){
-                    item.amount = elementText.toFloat()
+                    item?.amount = elementText.toFloat()
                     //println("amount: $elementText (${item.amount})")
                 }
                 else if(BaseUnit.isUnit(elementText.lowercase())) {
-                    item.unit = elementText
+                    item?.unit = elementText
                     //println("unit: $elementText (${item.unit})")
                 } else {
-                    item.good += "$elementText "
+                    item?.good += "$elementText "
                     //println("good: $elementText (${item.good})")
                 }
             }
 
             if(itemID == 0){
                 // try to merge item with list
-                if(!mItemViewModel.mergeItemWithList(item)){
+                if(!mItemViewModel.mergeItemWithList(item!!)){
                     // else: add Item to database
                     mItemViewModel.addItem(item)
                 }
             } else { // if there is an itemID it means the item should be overwritten
-                mItemViewModel.addItem(item)
+                mItemViewModel.addItem(item!!)
             }
         }
     }

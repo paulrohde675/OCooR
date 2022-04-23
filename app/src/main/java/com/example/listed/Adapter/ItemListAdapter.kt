@@ -64,31 +64,7 @@ class ItemListAdapter(
         // handle klick on item in RV
         holder.binding.clItem.setOnClickListener {
 
-            // open AddItemFragment if not already open
-            if (mainActivity.getSupportFragmentManager()
-                    .findFragmentByTag(mainActivity.ADD_ITEM_TAG) !is AddItemFragment
-            ) {
-                // open AddItemFragment with info from item (text and id to override)
-                // mainActivity.addItemFragment.initText = itemListOfLists[position].name
-                // mainActivity.addItemFragment.itemID = itemListOfLists[position].id
-
-                // blend in AddItemFragment
-                /*
-                mainActivity.supportFragmentManager.beginTransaction().apply {
-                    replace(
-                        R.id.fl_add_itemd,
-                        mainActivity.addItemFragment,
-                        mainActivity.ADD_ITEM_TAG
-                    )
-                    addToBackStack(null)
-                    commit()
-                }
-                */
-            } else { // if AddItem already open: update text in editTexField
-                // mainActivity.addItemFragment.edit_text.setText(itemListOfLists[position].name)
-                // mainActivity.addItemFragment.itemID = itemListOfLists[position].id
-
-            }
+            mainActivity.selectedListId = currentItemList.id
 
             // remove frame if new item is selected
             //----------------------------------------------

@@ -8,6 +8,7 @@ import androidx.room.*
 data class Item(
     @PrimaryKey(autoGenerate = true) var id: Int, //
     @ColumnInfo(name = "status") var status: String = "False",
+    @ColumnInfo(name = "list_id") var list_id: Int,
     @ColumnInfo(name = "itemText") val itemText: String = "",
     @ColumnInfo(name = "unit") var unit: String = "",
     @ColumnInfo(name = "amount") var amount: Float = 1f,

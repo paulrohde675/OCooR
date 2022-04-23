@@ -6,7 +6,6 @@ import android.content.Intent
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.widget.Toast
-import androidx.core.app.ActivityCompat.startActivityForResult
 import java.util.*
 
 

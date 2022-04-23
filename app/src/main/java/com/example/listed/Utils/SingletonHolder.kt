@@ -5,15 +5,15 @@ open class SingletonHolder<out T: Any, in A>(creator: (A) -> T) {
     @Volatile private var instance: T? = null
 
     fun getInstance(arg: A): T {
-        val checkInstance = instance
-        if (checkInstance != null) {
-            return checkInstance
+        val i = instance
+        if (i != null) {
+            return i
         }
 
         return synchronized(this) {
-            val checkInstanceAgain = instance
-            if (checkInstanceAgain != null) {
-                checkInstanceAgain
+            val i2 = instance
+            if (i2 != null) {
+                i2
             } else {
                 val created = creator!!(arg)
                 instance = created
