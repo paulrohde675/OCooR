@@ -10,16 +10,22 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ocoor.MainActivity
 import com.example.ocoor.R
 import com.example.ocoor.Utils.ItemList
 import com.example.ocoor.databinding.FragmentAddItemBinding
+import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.active_recycler_view_fragment.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
-class AddItemFragment: Fragment() {
+class AddListFragment: Fragment() {
 
     // views
     lateinit var binding: FragmentAddItemBinding
@@ -31,7 +37,6 @@ class AddItemFragment: Fragment() {
 
     // variables
     var initText = ""
-    var itemID = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +63,24 @@ class AddItemFragment: Fragment() {
         })
 
         // set clickListener
-        setItemClickListener()
+        setListClickListener()
+
+        /*
+        mainActivity.settingViewModel.readAllData.observe(this){
+
+            val itemListAdapter = mainActivity.listOfListsFragment.itemListAdapter
+            val itemList = itemListAdapter.itemListOfLists.filter { itemList -> itemList.id == it.selected_list_id }.getOrNull(0)
+
+            println("ItemList - Test 1 ")
+            if(itemList != null){
+                println("ItemList - Test 2 ")
+                val position = itemListAdapter.itemListOfLists.indexOf(itemList)
+                val itemListView = mainActivity.listOfListsFragment.itemListRecyclerView[position]
+                itemListAdapter.deactivateItemFrame()
+                itemListAdapter.activateItemFrame(itemListView as MaterialCardView)
+            }
+        }
+        */
     }
 
     override fun onCreateView(
@@ -69,27 +91,38 @@ class AddItemFragment: Fragment() {
         return binding.root
     }
 
+    fun setListClickListener(){
 
-    fun setItemClickListener(){
-        println("item click listener")
+        println("list click listener")
 
         binding.addItemButton.setOnClickListener {
             val text = edit_text.text.toString()
 
             // check if string is empty
             if (text.isNullOrBlank()) {
-                Toast.makeText(mainActivity, "You did not enter an item", Toast.LENGTH_SHORT).show()
+                Toast.makeText(mainActivity, "You did not enter a listname", Toast.LENGTH_SHORT).show()
             } // else: add item
             else{
-                val textSeq = text.trim().split(" ").toTypedArray()
-                //val textSeq = pattern.split(text).toTypedArray()
-                mainActivity.text2Item(textSeq, itemID=itemID)
+                val textSeq = text.trim()
+                val itemList = ItemList(0, textSeq)
+
+                // Dispatch to add a new list and add the list id to settings data
+                mainActivity.lifecycleScope.launch (Dispatchers.IO) {
+                    var id = mainActivity.mItemListViewModel.addItemListNoCR(itemList)
+                    val settings =  mainActivity.settingViewModel.readAllData.value
+                    if(settings != null){
+                        println("itemList ID:  ${id}")
+                        settings.selected_list_id = id
+                        mainActivity.settingViewModel.updateSettings(settings)
+                    }
+                }
+
                 edit_text.text.clear()
                 initText = ""
 
-                // deactivate selected item frames
-                mainActivity.activeRecyclerViewFragment.itemAdapter.deactivateItemFrame()
-                itemID = 0
+                // Move back to main Fragment
+                mainActivity.onBackPressed();
+                mainActivity.onBackPressed();
             }
         }
     }
@@ -111,22 +144,13 @@ class AddItemFragment: Fragment() {
 
         binding.textInputEditText.setText(initText)
         println("Set inactive rv invisible")
-
-        // Set the inactive recylerView invisible if AddItems is opend
-        val layout : RecyclerView = mainActivity.findViewById(R.id.inactiveRecyclerView)
-        layout.visibility = View.GONE
     }
 
     override fun onStop() {
         super.onStop()
 
         // Set the inactive recylerView visible if AddItems is closed
-        val layout : RecyclerView = mainActivity.findViewById(R.id.inactiveRecyclerView)
+        val layout : RecyclerView = mainActivity.findViewById(R.id.rv_list_of_list)
         layout.visibility = View.VISIBLE
-
-        // deactivate selected item frames
-        mainActivity.activeRecyclerViewFragment.itemAdapter.deactivateItemFrame()
-        itemID = 0
     }
-
 }

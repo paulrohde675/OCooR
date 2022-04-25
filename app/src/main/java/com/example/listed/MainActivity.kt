@@ -37,6 +37,7 @@ import com.example.listed.Fragments.ListOfListsFragment
 import com.example.ocoor.Adapter.ItemAdapter
 import com.example.ocoor.Fragments.ActiveRecyclerViewFragment
 import com.example.ocoor.Fragments.AddItemFragment
+import com.example.ocoor.Fragments.AddListFragment
 import com.example.ocoor.Units.BaseUnit
 import com.example.ocoor.Utils.*
 import com.example.ocoor.databinding.*
@@ -67,13 +68,14 @@ class MainActivity : AppCompatActivity() {
 
     // fragments
     lateinit var addItemFragment:AddItemFragment
+    lateinit var addListFragment: AddListFragment
     lateinit var activeRecyclerViewFragment:ActiveRecyclerViewFragment
     lateinit var listOfListsFragment:ListOfListsFragment
 
     // variables
     lateinit var bitmap: Bitmap
     var scanned_text:String = ""
-    var selectedListId:Int? = null
+    //var selectedListId:Int? = null
 
     // intent codes
     private val GALLERY_REQUEST_CODE = 1234
@@ -94,6 +96,7 @@ class MainActivity : AppCompatActivity() {
 
     // tags
     val ADD_ITEM_TAG = "ADD_ITEM_TAG"
+    val ADD_LIST_TAG = "ADD_LIST_TAG"
     val MOD_ITEM_TAG = "MOD_ITEM_TAG"
     val LIST_OF_LISTS_TAG = "LIST_OF_LISTS_TAG"
 
@@ -127,13 +130,14 @@ class MainActivity : AppCompatActivity() {
         binding_add_item_frag = FragmentAddItemBinding.inflate(layoutInflater)
         binding_active_recyler_view_frag = ActiveRecyclerViewFragmentBinding.inflate(layoutInflater)
         list_of_lists_frag = FragmentListOfListsBinding.inflate(layoutInflater)
-
         button_add = binding.buttonAdd
 
         // init fragments
+        addItemFragment = AddItemFragment()
+        addListFragment = AddListFragment()
         listOfListsFragment = ListOfListsFragment()
         activeRecyclerViewFragment = ActiveRecyclerViewFragment()
-        addItemFragment = AddItemFragment()
+
         //listOfListsFragment.initAdapter()
 
         val view = binding.root
@@ -143,9 +147,9 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         // get main database viewModel
+        settingViewModel = ViewModelProvider(this).get(SettingViewModel::class.java)
         mItemViewModel = ViewModelProvider(this).get(ItemViewModel::class.java)
         mItemListViewModel = ViewModelProvider(this).get(ItemListViewModel::class.java)
-        settingViewModel = ViewModelProvider(this).get(SettingViewModel::class.java)
 
 
 
@@ -155,37 +159,40 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.fl_main, activeRecyclerViewFragment)
             commit()
-            println("Init Fragment")
         }
+
+        // update settings recyclerView whenever the database is modified
+        settingViewModel.readAllData.observe(this, Observer { settings ->
+            if(mItemViewModel.readAllData.value != null){
+                activeRecyclerViewFragment.itemAdapter.setData(mItemViewModel.readAllData.value!!.filter {item -> item.status == "False" && item.list_id == settings.selected_list_id})
+                activeRecyclerViewFragment.itemAdapter.setData(mItemViewModel.readAllData.value!!.filter {item -> item.status == "False" && item.list_id == settings.selected_list_id})
+            }
+        })
 
         // update recyclerView whenever the database is modified
          mItemViewModel.readAllData.observe(this, Observer { items ->
-             activeRecyclerViewFragment.itemAdapter.setData(items.filter {item -> item.status == "False" && item.list_id == selectedListId})
+             activeRecyclerViewFragment.itemAdapter.setData(items.filter {item -> item.status == "False" && item.list_id == settingViewModel.readAllData.value!!.selected_list_id})
         })
 
         // update inactive recyclerView whenever the database is modified
         mItemViewModel.readAllData.observe(this, Observer { items ->
-            activeRecyclerViewFragment.inactiveItemAdapter.setData(items.filter {item -> item.status == "True" && item.list_id == selectedListId})
-        })
-
-        // update settings recyclerView whenever the database is modified
-        settingViewModel.readAllData.observe(this, Observer { settings ->
-            println("Change Setting 101")
-            println(settings?.ocr_type)
+            activeRecyclerViewFragment.inactiveItemAdapter.setData(items.filter {item -> item.status == "True" && item.list_id == settingViewModel.readAllData.value!!.selected_list_id})
         })
 
         // update settings recyclerView whenever the database is modified
         mItemListViewModel.readAllData.observe(this, Observer { itemLists ->
             if (itemLists.isEmpty()){
                 mItemListViewModel.addItemList(ItemList(1, "My List"))
-                selectedListId = 1
-            } else {
-                selectedListId = itemLists.get(0).id
+
+                //val setting = settingViewModel.readAllData.value
+                //setting!!.selected_list_id = 1
+                //settingViewModel.updateSettings(setting)
             }
+
 
             // this might cause problems
             // maybe find a different way to only update this once
-            mItemListViewModel.readAllData.removeObservers(this)
+            //mItemListViewModel.readAllData.removeObservers(this)
         })
 
         // handle incoming data from other apps
@@ -468,8 +475,8 @@ class MainActivity : AppCompatActivity() {
 
             var item:Item? = null
             println("New Item String: ${textArrayList.joinToString(" ") }")
-            if(selectedListId != null){
-                item = Item(id=itemID, itemText=textArrayList.joinToString(" "), list_id = selectedListId!!)
+            if(settingViewModel.readAllData.value != null){
+                item = Item(id=itemID, itemText=textArrayList.joinToString(" "), list_id = settingViewModel.readAllData.value!!.selected_list_id)
             } else {
                 Toast.makeText(this,"No List Seleted", Toast.LENGTH_SHORT).show()
                 return

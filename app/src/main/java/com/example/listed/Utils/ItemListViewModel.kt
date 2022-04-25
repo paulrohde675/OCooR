@@ -1,6 +1,7 @@
 package com.example.ocoor.Utils
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.*
 import com.example.ocoor.Adapter.ItemListAdapter
 import com.example.ocoor.MainActivity
@@ -28,8 +29,13 @@ class ItemListViewModel(application: Application): AndroidViewModel(application)
 
     fun addItemList(itemList: ItemList){
         viewModelScope.launch (Dispatchers.IO){
-            repository.addItem(itemList)
+            repository.addItem(itemList).toInt()
         }
+        return
+    }
+
+    suspend fun addItemListNoCR(itemList: ItemList) : Int{
+        return repository.addItem(itemList).toInt()
     }
 
     fun rmItemList(itemList: ItemList){

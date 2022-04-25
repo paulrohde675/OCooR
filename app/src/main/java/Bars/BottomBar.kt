@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.ocoor.Fragments.AddItemFragment
+import com.example.ocoor.Fragments.AddListFragment
 import com.example.ocoor.MainActivity
 import com.example.ocoor.R
 import com.example.ocoor.Utils.SingletonHolder
@@ -19,7 +20,7 @@ class BottomBar(val context: Context) {
     companion object : SingletonHolder<BottomBar, Context>(::BottomBar)
 
 
-    fun setBottomBarMainScreen(){
+    fun setBottomBarMainScreen() {
         mainActivity.bottomAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.button_cam -> {
@@ -27,7 +28,11 @@ class BottomBar(val context: Context) {
                     // button to take picture witch camera
 
                     // get permission to sue camera
-                    if(ContextCompat.checkSelfPermission(mainActivity, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                    if (ContextCompat.checkSelfPermission(
+                            mainActivity,
+                            android.Manifest.permission.CAMERA
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
                         mainActivity.requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
                     }
                     mainActivity.onLaunchCamera()
@@ -54,22 +59,50 @@ class BottomBar(val context: Context) {
             }
         }
 
-
         // floating action button in bottom bar
-        mainActivity.button_add.setOnClickListener(){
+        mainActivity.button_add.setOnClickListener() {
             mainActivity.addItemFragment.initText = ""
             mainActivity.addItemFragment.itemID = 0
 
+            //open up add_item_fragment (if not already open)
+            if (mainActivity.supportFragmentManager
+                    .findFragmentByTag(mainActivity.ADD_ITEM_TAG) !is AddItemFragment
+            ) {
+                mainActivity.supportFragmentManager.beginTransaction().apply {
+                    replace(
+                        R.id.fl_add_itemd,
+                        mainActivity.addItemFragment,
+                        mainActivity.ADD_ITEM_TAG
+                    )
+                    addToBackStack(null)
+                    commit()
+                }
+            }
+
+            // set clickListener to times
+            // mainActivity.addItemFragment.setItemClickListener()
+        }
+    }
+
+    fun setBottomBarListScreen() {
+
+        // floating action button in bottom bar
+        mainActivity.button_add.setOnClickListener() {
 
             //open up add_item_fragment (if not already open)
-            if(mainActivity.getSupportFragmentManager().findFragmentByTag(mainActivity.ADD_ITEM_TAG) !is AddItemFragment){
+            if (mainActivity.getSupportFragmentManager()
+                    .findFragmentByTag(mainActivity.ADD_LIST_TAG) !is AddListFragment
+            ) {
                 mainActivity.supportFragmentManager.beginTransaction().apply {
-                    replace(R.id.fl_add_itemd, mainActivity.addItemFragment, mainActivity.ADD_ITEM_TAG)
+                    replace(
+                        R.id.fl_add_itemd,
+                        mainActivity.addListFragment,
+                        mainActivity.ADD_LIST_TAG
+                    )
                     addToBackStack(null)
                     commit()
                 }
             }
         }
     }
-
 }

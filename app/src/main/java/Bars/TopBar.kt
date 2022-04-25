@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import com.example.listed.Fragments.ListOfListsFragment
 import com.example.ocoor.Fragments.AddItemFragment
+import com.example.ocoor.Fragments.AddListFragment
 import com.example.ocoor.MainActivity
 import com.example.ocoor.R
 import com.example.ocoor.Utils.SingletonHolder
@@ -19,13 +21,23 @@ class TopBar(context: Context) {
     fun setTopBarMainScreen() {
         // top app bar buttons
         mainActivity.topAppBar.setNavigationOnClickListener{
+
+            // If addItem Fragment is open, close it
+            if (mainActivity.supportFragmentManager
+                    .findFragmentByTag(mainActivity.ADD_ITEM_TAG) != null
+            ) {
+                mainActivity.onBackPressed();
+            }
+
             //open up add_item_fragment (if not already open)
-            if(mainActivity.getSupportFragmentManager().findFragmentByTag(mainActivity.LIST_OF_LISTS_TAG) !is AddItemFragment){
+            if(mainActivity.getSupportFragmentManager().findFragmentByTag(mainActivity.LIST_OF_LISTS_TAG) !is ListOfListsFragment){
                 mainActivity.supportFragmentManager.beginTransaction().apply {
                     replace(R.id.fl_main, mainActivity.listOfListsFragment, mainActivity.LIST_OF_LISTS_TAG)
                     addToBackStack(null)
                     commit()
                 }
+            } else {
+                mainActivity.onBackPressed();
             }
         }
 

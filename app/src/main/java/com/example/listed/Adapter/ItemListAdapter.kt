@@ -64,8 +64,31 @@ class ItemListAdapter(
         // handle klick on item in RV
         holder.binding.clItem.setOnClickListener {
 
-            mainActivity.selectedListId = currentItemList.id
+            //mainActivity.selectedListId = currentItemList.id
 
+            // select list
+            val settings =  mainActivity.settingViewModel.readAllData.value
+            if(settings != null){
+
+                settings.selected_list_id = currentItemList.id
+                mainActivity.settingViewModel.updateSettings(settings)
+
+                // remove frame if new item is selected
+                //----------------------------------------------
+                deactivateItemFrame()
+
+                // add frame to selected item
+                //----------------------------------------------
+                activateItemFrame(holder.binding.cvItem)
+
+                // go back to main activity
+                mainActivity.onBackPressed();
+            }
+
+        }
+
+        //println("List: ${currentItemList.id} | ${mainActivity.settingViewModel.readAllData.value!!.selected_list_id}")
+        if(currentItemList.id == mainActivity.settingViewModel.readAllData.value!!.selected_list_id){
             // remove frame if new item is selected
             //----------------------------------------------
             deactivateItemFrame()
@@ -74,8 +97,6 @@ class ItemListAdapter(
             //----------------------------------------------
             activateItemFrame(holder.binding.cvItem)
         }
-
-
     }
 
     fun activateItemFrame(itemCardView: com.google.android.material.card.MaterialCardView?) {
@@ -85,7 +106,7 @@ class ItemListAdapter(
     }
 
     fun deactivateItemFrame() {
-        println("Deselect item: ${selectedList}")
+        println("Deselect list: ${selectedList}")
         if (selectedList != null) {
             selectedList!!.strokeWidth = 0
             selectedList!!.invalidate()
@@ -147,7 +168,8 @@ class ItemListAdapter(
                 direction: Int
             ) {
                 val pos = viewHolder.adapterPosition
-                val newItem = itemListOfLists[pos]
+                val swipedList = itemListOfLists[pos]
+                mItemListViewModel.rmItemList(swipedList)
             }
 
             override fun clearView(

@@ -22,7 +22,7 @@ interface ItemListDao {
     fun getItemById(getId: Int): ItemList?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE) //REPLACE //IGNORE
-    fun addItem(item: ItemList)
+    fun addItem(item: ItemList): Long
 
     @Query("SELECT * FROM item_list_data ORDER BY id DESC")
     fun readAllData(): LiveData<List<ItemList>>
@@ -44,8 +44,8 @@ class ItemListRepository(private val itemListDao: ItemListDao){
 
     val readAllData: LiveData<List<ItemList>> = itemListDao.readAllData()
 
-    suspend fun addItem(itemList:ItemList){
-        itemListDao.addItem(itemList)
+    suspend fun addItem(itemList:ItemList): Long{
+        return itemListDao.addItem(itemList)
     }
 
     suspend fun getItem(getId:Int) : ItemList?{

@@ -62,6 +62,11 @@ class ItemViewModel(application: Application): AndroidViewModel(application) {
             if(itemInList.status == "True"){
                 continue
             }
+            // only merge wit items in same list
+            if(itemInList.list_id != newItem.list_id){
+                continue
+            }
+
 
             // first look if the good similar
             // Todo: if two or more merges are possible

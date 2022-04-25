@@ -6,8 +6,8 @@ import androidx.room.*
 @Entity(tableName = "setting_data")
 data class SettingData(
     @PrimaryKey(autoGenerate = false) var id: Int = 1,
-    @ColumnInfo(name = "ocr_type") var ocr_type: String = "complex"
-)
+    @ColumnInfo(name = "ocr_type") var ocr_type: String = "complex",
+    @ColumnInfo(name = "selected_list_id") var selected_list_id: Int = 1)
 
 @Dao
 interface SettingDao {

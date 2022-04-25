@@ -1,5 +1,6 @@
 package com.example.listed.Fragments
 
+import Bars.BottomBar
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -27,27 +28,17 @@ class ListOfListsFragment : Fragment() {
     // main activity
     lateinit var mainActivity: MainActivity
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        //arguments?.let {
-        //}
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-
-        println("-------------> Create List of Lists Frag <-------------------")
-        println("")
         mainActivity = requireActivity() as MainActivity
 
         binding = FragmentListOfListsBinding.inflate(layoutInflater)
 
         itemListAdapter = ItemListAdapter(mutableListOf(), mainActivity.mItemListViewModel, mainActivity)
-        itemListRecyclerView = binding.activeRecyclerView
+        itemListRecyclerView = binding.rvListOfList
         itemListRecyclerView.layoutManager = LinearLayoutManager(context)
         itemListRecyclerView.adapter = itemListAdapter
 
@@ -59,12 +50,18 @@ class ListOfListsFragment : Fragment() {
         return binding.root
     }
 
-    fun initAdapter(){
-        mainActivity = requireActivity() as MainActivity
-        itemListAdapter = ItemListAdapter(mutableListOf(), mainActivity.mItemListViewModel, mainActivity)
+    override fun onStart() {
+        super.onStart()
 
+        // switch bars to list setup
+        BottomBar(mainActivity).setBottomBarListScreen()
+    }
 
+    override fun onStop() {
+        super.onStop()
 
+        // switch bars to list setup
+        BottomBar(mainActivity).setBottomBarMainScreen()
     }
 
 }
