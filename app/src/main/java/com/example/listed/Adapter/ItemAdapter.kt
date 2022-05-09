@@ -63,6 +63,15 @@ class ItemAdapter(
         // update item when button is checked
         holder.binding.itemCheckbox.setOnClickListener() {
 
+            // if add item view is open, close it!
+            if (mainActivity.getSupportFragmentManager()
+                    .findFragmentByTag(mainActivity.ADD_ITEM_TAG) is AddItemFragment
+            ) {
+                if(selectedItem == holder.binding.cvItem){
+                    mainActivity.onBackPressed();
+                }
+            }
+
             itemList[position].status = holder.binding.itemCheckbox.isChecked.toString()
             val newItem = itemList[position]
             newItem.status = "True"
@@ -145,6 +154,8 @@ class ItemAdapter(
             UP or DOWN, LEFT or RIGHT
         ) {
 
+
+
             var start_swap: Int = 9999
             var end_swap: Int = 0
 
@@ -177,6 +188,12 @@ class ItemAdapter(
                 viewHolder: RecyclerView.ViewHolder,
                 direction: Int
             ) {
+
+                // do not swipe selected view
+                if(selectedItem == viewHolder.itemView){
+                    mainActivity.onBackPressed();
+                }
+
                 val pos = viewHolder.adapterPosition
                 val newItem = itemList[pos]
                 newItem.status = "True"

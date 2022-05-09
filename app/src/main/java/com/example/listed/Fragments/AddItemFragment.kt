@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.constraintlayout.widget.Guideline
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ocoor.MainActivity
@@ -115,6 +116,13 @@ class AddItemFragment: Fragment() {
         // Set the inactive recylerView invisible if AddItems is opend
         val layout : RecyclerView = mainActivity.findViewById(R.id.inactiveRecyclerView)
         layout.visibility = View.GONE
+
+        // shrink guide split ratio between ative and inactive RV
+        val guideLine : Guideline = mainActivity.findViewById(R.id.seperatorLine)
+        guideLine.setGuidelinePercent(0.99f)
+
+        val guideLineView : View = mainActivity.findViewById(R.id.seperatorLineView)
+        guideLineView.visibility = View.GONE
     }
 
     override fun onStop() {
@@ -127,6 +135,14 @@ class AddItemFragment: Fragment() {
         // deactivate selected item frames
         mainActivity.activeRecyclerViewFragment.itemAdapter.deactivateItemFrame()
         itemID = 0
+
+        // strech guide split ratio between ative and inactive RV
+        val guideLine : Guideline = mainActivity.findViewById(R.id.seperatorLine)
+        guideLine.setGuidelinePercent(mainActivity.splitRatio)
+
+        val guideLineView : View = mainActivity.findViewById(R.id.seperatorLineView)
+        guideLineView.visibility = View.VISIBLE
+
     }
 
 }

@@ -75,11 +75,10 @@ class MainActivity : AppCompatActivity() {
     // variables
     lateinit var bitmap: Bitmap
     var scanned_text:String = ""
-    //var selectedListId:Int? = null
+    var splitRatio = 0.8f
 
     // intent codes
     private val GALLERY_REQUEST_CODE = 1234
-    //private val REQUEST_IMAGE_CAPTURE = 1
     private val CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1034
 
     val APP_TAG = "MyCustomApp"

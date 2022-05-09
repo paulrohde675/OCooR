@@ -8,6 +8,7 @@
         <entry key="..\:/Users/Paul/AndroidStudioProjects/Listed/app/src/main/res/layout/active_recycler_view_fragment.xml" value="0.16485507246376813" />
         <entry key="..\:/Users/Paul/AndroidStudioProjects/Listed/app/src/main/res/layout/fragment_add_item.xml" value="0.16485507246376813" />
         <entry key="..\:/Users/Paul/AndroidStudioProjects/Listed/app/src/main/res/layout/fragment_list_of_lists.xml" value="0.16485507246376813" />
+        <entry key="..\:/Users/Paul/AndroidStudioProjects/Listed/app/src/main/res/layout/item_layout.xml" value="0.16485507246376813" />
         <entry key="..\:/Users/Paul/AndroidStudioProjects/Listed/app/src/main/res/layout/list_layout.xml" value="0.4" />
         <entry key="..\:/Users/Paul/AndroidStudioProjects/Listed/app/src/main/res/layout/main_activity.xml" value="0.14583333333333334" />
         <entry key="..\:/Users/Paul/AndroidStudioProjects/Listed/app/src/main/res/layout/main_fragment.xml" value="0.16485507246376813" />
@@ -45,9 +46,6 @@
         <entry key="..\:/Users/Paul/StudioProjects/OCooR/app/src/main/res/layout/provider_paths.xml" value="0.1953125" />
       </map>
     </option>
-  </component>
-  <component name="ProjectPlainTextFileTypeManager">
-    <file url="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_test.xml" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />

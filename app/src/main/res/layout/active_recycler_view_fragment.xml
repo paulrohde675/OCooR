@@ -8,22 +8,29 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/activeRecyclerView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/slider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
+        app:layout_constraintBottom_toTopOf="@+id/inactiveRecyclerView"
+        app:layout_constraintTop_toTopOf="parent"
+        >
     </androidx.recyclerview.widget.RecyclerView>
 
-    <View
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/seperatorLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8"
+        />
+
+    <View
+        android:id="@+id/seperatorLineView"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginBottom="@dimen/half_slider_height"
+        android:layout_height="20dp"
         android:background="?attr/colorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/inactiveRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,28 +38,45 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/inactiveRecyclerView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/slider"
+        app:layout_constraintTop_toTopOf="@+id/seperatorLine"
         >
 
     </androidx.recyclerview.widget.RecyclerView>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/slider"
-        android:layout_width="@dimen/slider_width"
-        android:layout_height="@dimen/slider_height"
-        android:layout_marginBottom="100dp"
-        android:clickable="true"
-        android:src="@drawable/ic_baseline_menu_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+
+
+
+
+    <!--
+        <View
+            android:id="@+id/seperatorLine"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginBottom="@dimen/half_slider_height"
+            android:background="?attr/colorPrimary"
+            app:layout_constraintBottom_toTopOf="@+id/inactiveRecyclerView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/slider"
+            android:layout_width="@dimen/slider_width"
+            android:layout_height="@dimen/slider_height"
+            android:layout_marginBottom="100dp"
+            android:clickable="true"
+            android:src="@drawable/ic_baseline_menu_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+    -->
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,7 +17,8 @@
         android:layout_height="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        android:animateLayoutChanges="true">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/add_item_card_view"
