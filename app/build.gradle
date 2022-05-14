@@ -5,13 +5,14 @@ plugins {
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
     id 'androidx.navigation.safeargs.kotlin'
+    id 'com.google.gms.google-services'
 }
 
 android {
     compileSdk 32
 
     defaultConfig {
-        applicationId "com.example.OCRlist"
+        applicationId "com.example.ListIt"
         minSdk 26
         targetSdk 32
         versionCode 1
@@ -131,4 +132,8 @@ dependencies {
 
     implementation "androidx.preference:preference-ktx:1.2.0"
 
+    // Preferences DataStore (Params)
+    //-----------------------------------
+    implementation platform('com.google.firebase:firebase-bom:30.0.1')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 }
