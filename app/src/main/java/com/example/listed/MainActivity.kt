@@ -9,8 +9,6 @@ import Bars.TopBar
 import android.annotation.SuppressLint
 import android.content.*
 import android.content.ContentValues.TAG
-import android.content.pm.PackageManager
-import android.content.res.Resources.Theme
 import android.content.res.TypedArray
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -23,28 +21,26 @@ import android.provider.MediaStore
 import android.speech.RecognizerIntent
 import android.util.Log
 import android.util.TypedValue
-import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.listed.Fragments.ListOfListsFragment
-import com.example.ocoor.Adapter.ItemAdapter
 import com.example.ocoor.Fragments.ActiveRecyclerViewFragment
 import com.example.ocoor.Fragments.AddItemFragment
 import com.example.ocoor.Fragments.AddListFragment
 import com.example.ocoor.Units.BaseUnit
 import com.example.ocoor.Utils.*
 import com.example.ocoor.databinding.*
+import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.common.api.ApiException
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.mlkit.vision.common.InputImage
@@ -109,6 +105,9 @@ class MainActivity : AppCompatActivity() {
 
     // firebase
     lateinit var gAuth: FirebaseAuth
+    lateinit var googleSignInClient: GoogleSignInClient
+    lateinit var oneTapClient: SignInClient
+    lateinit var loginGoogle : LoginGoogle
 
     // permissions
     val requestPermissionLauncher =
@@ -232,6 +231,10 @@ class MainActivity : AppCompatActivity() {
 
         //FireBase
         gAuth = Firebase.auth
+        loginGoogle = LoginGoogle(this)
+        loginGoogle.oneClickSetup()
+        loginGoogle.signIn()
+
 
 
     }
@@ -382,35 +385,17 @@ class MainActivity : AppCompatActivity() {
                 text2Item(textSeq)
             }
             LoginGoogle(this).REQ_ONE_TAP -> {
-                val googleCredential = LoginGoogle(this).oneTapClient.getSignInCredentialFromIntent(data)
-                val idToken = googleCredential.googleIdToken
-                when {
-
-                    idToken != null -> {
-                        // Got an ID token from Google. Use it to authenticate
-                        // with Firebase.
-                        val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-                        gAuth.signInWithCredential(firebaseCredential)
-                            .addOnCompleteListener(this) { task ->
-                                if (task.isSuccessful) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d(TAG, "signInWithCredential:success")
-                                    val user = gAuth.currentUser
-                                    //updateUI(user)
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-                                    //updateUI(null)
-                                }
-                            }
-                    }
-                    else -> {
-                        // Shouldn't happen.
-                        Log.d(TAG, "No ID token!")
-                    }
+                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                try {
+                    // Google Sign In was successful, authenticate with Firebase
+                    val account = task.getResult(ApiException::class.java)!!
+                    Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
+                    loginGoogle.firebaseAuthWithGoogle(account.idToken!!)
+                } catch (e: ApiException) {
+                    // Google Sign In failed, update UI appropriately
+                    Log.w(TAG, "Google sign in failed", e)
                 }
             }
-
         }
     }
 
