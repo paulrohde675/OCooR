@@ -3,6 +3,7 @@ package com.example.ocoor
 
 //import java.util.*
 
+import Authentication.LoginGoogle
 import Bars.BottomBar
 import Bars.TopBar
 import android.annotation.SuppressLint
@@ -42,6 +43,10 @@ import com.example.ocoor.Units.BaseUnit
 import com.example.ocoor.Utils.*
 import com.example.ocoor.databinding.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
@@ -101,6 +106,9 @@ class MainActivity : AppCompatActivity() {
 
     // colors
     var myColor : Int = Color.WHITE
+
+    // firebase
+    lateinit var gAuth: FirebaseAuth
 
     // permissions
     val requestPermissionLauncher =
@@ -222,6 +230,17 @@ class MainActivity : AppCompatActivity() {
         // init bottom bar
         BottomBar(this).setBottomBarMainScreen()
 
+        //FireBase
+        gAuth = Firebase.auth
+
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Check if user is signed in (non-null) and update UI accordingly.
+        val currentUser = gAuth.currentUser
+        //updateUI(currentUser)
     }
 
     //----------------------------------------------------------------------------------------------
@@ -291,7 +310,6 @@ class MainActivity : AppCompatActivity() {
         // Return the file target for the photo based on filename
         return File(mediaStorageDir.path + File.separator + fileName)
     }
-
 
     fun pickFromGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -363,6 +381,36 @@ class MainActivity : AppCompatActivity() {
                 println("t2s: ${t2s_result?.get(0).toString()}")
                 text2Item(textSeq)
             }
+            LoginGoogle(this).REQ_ONE_TAP -> {
+                val googleCredential = LoginGoogle(this).oneTapClient.getSignInCredentialFromIntent(data)
+                val idToken = googleCredential.googleIdToken
+                when {
+
+                    idToken != null -> {
+                        // Got an ID token from Google. Use it to authenticate
+                        // with Firebase.
+                        val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+                        gAuth.signInWithCredential(firebaseCredential)
+                            .addOnCompleteListener(this) { task ->
+                                if (task.isSuccessful) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.d(TAG, "signInWithCredential:success")
+                                    val user = gAuth.currentUser
+                                    //updateUI(user)
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                                    //updateUI(null)
+                                }
+                            }
+                    }
+                    else -> {
+                        // Shouldn't happen.
+                        Log.d(TAG, "No ID token!")
+                    }
+                }
+            }
+
         }
     }
 
