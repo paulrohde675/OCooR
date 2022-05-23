@@ -6,6 +6,7 @@ package com.example.ocoor
 import Authentication.LoginGoogle
 import Bars.BottomBar
 import Bars.TopBar
+import FireBase.FireBaseUtil
 import android.annotation.SuppressLint
 import android.content.*
 import android.content.ContentValues.TAG
@@ -108,6 +109,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var googleSignInClient: GoogleSignInClient
     lateinit var oneTapClient: SignInClient
     lateinit var loginGoogle : LoginGoogle
+    lateinit var fireBaseUtil : FireBaseUtil
 
     // permissions
     val requestPermissionLauncher =
@@ -234,6 +236,7 @@ class MainActivity : AppCompatActivity() {
         loginGoogle = LoginGoogle(this)
         loginGoogle.oneClickSetup()
         loginGoogle.signIn()
+        fireBaseUtil = FireBaseUtil(this)
 
 
 
@@ -391,6 +394,11 @@ class MainActivity : AppCompatActivity() {
                     val account = task.getResult(ApiException::class.java)!!
                     Log.d(TAG, "firebaseAuthWithGoogle:" + account.id)
                     loginGoogle.firebaseAuthWithGoogle(account.idToken!!)
+                    println(account.displayName)
+                    println(account.id)
+                    println(account.email)
+                    println(account.displayName)
+
                 } catch (e: ApiException) {
                     // Google Sign In failed, update UI appropriately
                     Log.w(TAG, "Google sign in failed", e)

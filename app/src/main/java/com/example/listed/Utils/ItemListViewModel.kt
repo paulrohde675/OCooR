@@ -27,6 +27,16 @@ class ItemListViewModel(application: Application): AndroidViewModel(application)
 
     }
 
+    fun getItemList(itemListID:Int):ItemList?{
+        var itemList:ItemList? = null
+
+        viewModelScope.launch (Dispatchers.IO){
+            itemList = repository.getItem(itemListID)
+        }
+        print("Return item list: ${itemList}")
+        return itemList
+    }
+
     fun addItemList(itemList: ItemList){
         viewModelScope.launch (Dispatchers.IO){
             repository.addItem(itemList).toInt()

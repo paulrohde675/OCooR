@@ -114,7 +114,7 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
 
     // Material Design Compnents
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.material:material:1.6.0'
 
     // Preferences DataStore (Params)
     //-----------------------------------
@@ -132,18 +132,21 @@ dependencies {
 
     implementation "androidx.preference:preference-ktx:1.2.0"
 
-    // FireBase
-    //-----------------------------------
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-
-    // Import the BoM for the Firebase platform
-    implementation platform('com.google.firebase:firebase-bom:30.0.1')
-
-    // Declare the dependency for the Firebase Authentication library
-    // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation 'com.google.firebase:firebase-auth-ktx'
-
     // Also declare the dependency for the Google Play services library and specify its version
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
 
+    // FireBase
+    //-----------------------------------
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:30.0.2')
+
+    // Declare the dependency for the Firebase Authentication library
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
+    // Firestore Database
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+
+    // Analytics
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
 }

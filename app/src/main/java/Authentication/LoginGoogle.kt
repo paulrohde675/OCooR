@@ -37,7 +37,7 @@ class LoginGoogle(val context: Context) {
         startActivityForResult(mainActivity, signInIntent, REQ_ONE_TAP, null)
     }
 
-    fun signOn() {
+    fun signOut() {
         gAuth.signOut()
     }
 

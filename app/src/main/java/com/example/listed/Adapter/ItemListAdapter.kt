@@ -84,7 +84,12 @@ class ItemListAdapter(
                 // go back to main activity
                 mainActivity.onBackPressed();
             }
+        }
 
+        // Set cloud button
+        holder.binding.btnCloud.setOnClickListener {
+            println("Button pressed")
+            mainActivity.fireBaseUtil.uploadList(currentItemList.id)
         }
 
         //println("List: ${currentItemList.id} | ${mainActivity.settingViewModel.readAllData.value!!.selected_list_id}")

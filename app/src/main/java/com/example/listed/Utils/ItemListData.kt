@@ -44,15 +44,15 @@ class ItemListRepository(private val itemListDao: ItemListDao){
 
     val readAllData: LiveData<List<ItemList>> = itemListDao.readAllData()
 
-    suspend fun addItem(itemList:ItemList): Long{
+    fun addItem(itemList:ItemList): Long{
         return itemListDao.addItem(itemList)
     }
 
-    suspend fun getItem(getId:Int) : ItemList?{
+    fun getItem(getId:Int) : ItemList?{
         return itemListDao.getItemById(getId)
     }
 
-    suspend fun rmItem(itemList:ItemList){
+    fun rmItem(itemList:ItemList){
         itemListDao.rmItem(itemList)
     }
 
