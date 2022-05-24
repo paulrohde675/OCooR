@@ -88,8 +88,27 @@ class ItemListAdapter(
 
         // Set cloud button
         holder.binding.btnCloud.setOnClickListener {
-            println("Button pressed")
-            mainActivity.fireBaseUtil.uploadList(currentItemList.id)
+
+            // change cloud flag
+            val itemList = itemListOfLists[position]
+
+            if(itemList.cloud == 0){
+                itemList.cloud = 1
+                mItemListViewModel.addItemList(itemList)
+
+                // Upload List
+                mainActivity.fireBaseUtil.uploadList(currentItemList.id)
+            }
+            else {
+                itemList.cloud = 0
+                mItemListViewModel.addItemList(itemList)
+
+                // Delete List from cloud
+                // Todo
+            }
+
+
+
         }
 
         //println("List: ${currentItemList.id} | ${mainActivity.settingViewModel.readAllData.value!!.selected_list_id}")
