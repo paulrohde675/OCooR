@@ -9,6 +9,7 @@ data class ItemList(
     @PrimaryKey(autoGenerate = true) var id: Int, //
     @ColumnInfo(name = "name") var name: String = "My List",
     @ColumnInfo(name = "cloud") var cloud: Int = 0,
+    @ColumnInfo(name = "fid") var fid: String = "",
 )
 
 @Dao

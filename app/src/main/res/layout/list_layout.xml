@@ -41,6 +41,7 @@
             android:background="@android:color/transparent"
             android:minWidth="0dp"
             app:icon="@drawable/ic_baseline_cloud_outline_24"
+            app:iconTint="?attr/colorSecondary"
             android:elevation="8dp"
             app:iconPadding="0dp"
             app:layout_constraintBottom_toBottomOf="parent"

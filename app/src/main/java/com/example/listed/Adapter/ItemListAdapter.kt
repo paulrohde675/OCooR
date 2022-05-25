@@ -2,6 +2,7 @@ package com.example.ocoor.Adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
@@ -86,15 +87,34 @@ class ItemListAdapter(
             }
         }
 
+        // get cloud button
+        val btnCloud = holder.binding.btnCloud
+        val itemList = itemListOfLists[position]
+
+        // Set cloud button Icon
+        if(itemList.cloud == 0) {
+            btnCloud.setCompoundDrawablesWithIntrinsicBounds(
+                R.drawable.ic_baseline_cloud_outline_24,
+                0,
+                0,
+                0
+            )
+        } else {
+            btnCloud.setCompoundDrawablesWithIntrinsicBounds(
+                R.drawable.ic_baseline_cloud_full_24,
+                0,
+                0,
+                0
+            )
+        }
+
         // Set cloud button
-        holder.binding.btnCloud.setOnClickListener {
-
+        btnCloud.setOnClickListener {
             // change cloud flag
-            val itemList = itemListOfLists[position]
-
             if(itemList.cloud == 0){
                 itemList.cloud = 1
                 mItemListViewModel.addItemList(itemList)
+                btnCloud.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_cloud_full_24, 0, 0, 0);
 
                 // Upload List
                 mainActivity.fireBaseUtil.uploadList(currentItemList.id)
@@ -102,12 +122,11 @@ class ItemListAdapter(
             else {
                 itemList.cloud = 0
                 mItemListViewModel.addItemList(itemList)
+                btnCloud.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_cloud_outline_24, 0, 0, 0);
 
                 // Delete List from cloud
                 // Todo
             }
-
-
 
         }
 

@@ -30,6 +30,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.listed.Fragments.ListOfListsFragment
+import com.example.listed.Utils.DataBaseInterface
 import com.example.ocoor.Fragments.ActiveRecyclerViewFragment
 import com.example.ocoor.Fragments.AddItemFragment
 import com.example.ocoor.Fragments.AddListFragment
@@ -90,11 +91,6 @@ class MainActivity : AppCompatActivity() {
     // adapter
     //lateinit var itemAdapter:ItemAdapter
 
-    // data_base
-    lateinit var mItemViewModel: ItemViewModel
-    lateinit var mItemListViewModel: ItemListViewModel
-    lateinit var settingViewModel: SettingViewModel
-
     // tags
     val ADD_ITEM_TAG = "ADD_ITEM_TAG"
     val ADD_LIST_TAG = "ADD_LIST_TAG"
@@ -104,7 +100,13 @@ class MainActivity : AppCompatActivity() {
     // colors
     var myColor : Int = Color.WHITE
 
+    // data_base
+    lateinit var mItemViewModel: ItemViewModel
+    lateinit var mItemListViewModel: ItemListViewModel
+    lateinit var settingViewModel: SettingViewModel
+
     // firebase
+    lateinit var dbif: DataBaseInterface
     lateinit var gAuth: FirebaseAuth
     lateinit var googleSignInClient: GoogleSignInClient
     lateinit var oneTapClient: SignInClient
@@ -237,6 +239,7 @@ class MainActivity : AppCompatActivity() {
         loginGoogle.oneClickSetup()
         loginGoogle.signIn()
         fireBaseUtil = FireBaseUtil(this)
+        dbif = DataBaseInterface(this)
 
 
 
@@ -570,10 +573,10 @@ class MainActivity : AppCompatActivity() {
                 // try to merge item with list
                 if(!mItemViewModel.mergeItemWithList(item!!)){
                     // else: add Item to database
-                    mItemViewModel.addItem(item)
+                    dbif.addItem(item)
                 }
             } else { // if there is an itemID it means the item should be overwritten
-                mItemViewModel.addItem(item!!)
+                dbif.addItem(item!!)
             }
         }
     }
