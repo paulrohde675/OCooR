@@ -69,6 +69,11 @@ class FireBaseUtil(val context: Context) {
         val itemList = mItemListViewModel.readAllData.value?.filter { it.id == itemListID }?.get(0)
         if(itemList != null){
 
+            // Check if already in cloud
+            if(itemList.cloud == 1){
+                return
+            }
+
             // init new list on firestore
             //------------------------------------------------
             // add list to firestore

@@ -3,10 +3,10 @@ package com.example.ocoor.Utils
 import android.app.Application
 import androidx.lifecycle.*
 import com.example.ocoor.Units.BaseUnit
-import com.google.android.gms.common.internal.FallbackServiceBroker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okio.utf8Size
+import java.util.stream.Collectors
 
 class ItemViewModel(application: Application): AndroidViewModel(application) {
 
@@ -29,6 +29,18 @@ class ItemViewModel(application: Application): AndroidViewModel(application) {
         viewModelScope.launch (Dispatchers.IO){
             for (item in items){
                 repository.addItem(item)
+            }
+        }
+    }
+
+    fun rmItems(itemList: ItemList){
+        val items = readAllData.value?.filter { it.id == itemList.id }
+
+        if(items != null){
+            val idList: List<Int> = items.stream().map(Item::id).collect(Collectors.toList()) as List<Int>
+
+            viewModelScope.launch (Dispatchers.IO){
+                repository.rmItems(idList)
             }
         }
     }

@@ -35,6 +35,9 @@ interface ItemDao {
     //@Update
     //suspend fun updateItem()
 
+    @Query("delete from item where id in (:idList)")
+    fun rmItems(idList: List<Int>)
+
     @Delete
     fun rmItem(item: Item)
 
@@ -59,6 +62,10 @@ class ItemRepository(private val itemDao: ItemDao){
 
     suspend fun rmItem(item:Item){
         itemDao.rmItem(item)
+    }
+
+    suspend fun rmItems(idList: List<Int>){
+        itemDao.rmItems(idList)
     }
 
 }

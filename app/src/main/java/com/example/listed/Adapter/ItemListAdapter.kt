@@ -62,7 +62,7 @@ class ItemListAdapter(
         holder.binding.itemTvGood.text = currentItemList.name
 
 
-        // handle klick on item in RV
+        // handle click on item in RV
         holder.binding.clItem.setOnClickListener {
 
             //mainActivity.selectedListId = currentItemList.id
@@ -93,41 +93,33 @@ class ItemListAdapter(
 
         // Set cloud button Icon
         if(itemList.cloud == 0) {
-            btnCloud.setCompoundDrawablesWithIntrinsicBounds(
-                R.drawable.ic_baseline_cloud_outline_24,
-                0,
-                0,
-                0
-            )
+            btnCloud.setIconResource(R.drawable.ic_baseline_cloud_outline_24)
+            btnCloud.invalidate()
         } else {
-            btnCloud.setCompoundDrawablesWithIntrinsicBounds(
-                R.drawable.ic_baseline_cloud_full_24,
-                0,
-                0,
-                0
-            )
+            btnCloud.setIconResource(R.drawable.ic_baseline_cloud_full_24)
+            btnCloud.invalidate()
+        }
+
+        // Set delete button
+        //------------------------------------------------------------------------------------------
+        holder.binding.btnDelete.setOnClickListener {
+            println("Delete List")
+            mainActivity.dbif.deleteList(itemList)
         }
 
         // Set cloud button
+        //------------------------------------------------------------------------------------------
         btnCloud.setOnClickListener {
             // change cloud flag
             if(itemList.cloud == 0){
                 itemList.cloud = 1
                 mItemListViewModel.addItemList(itemList)
-                btnCloud.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_cloud_full_24, 0, 0, 0);
+                btnCloud.setIconResource(R.drawable.ic_baseline_cloud_full_24)
+                btnCloud.invalidate()
 
                 // Upload List
                 mainActivity.fireBaseUtil.uploadList(currentItemList.id)
             }
-            else {
-                itemList.cloud = 0
-                mItemListViewModel.addItemList(itemList)
-                btnCloud.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_cloud_outline_24, 0, 0, 0);
-
-                // Delete List from cloud
-                // Todo
-            }
-
         }
 
         //println("List: ${currentItemList.id} | ${mainActivity.settingViewModel.readAllData.value!!.selected_list_id}")

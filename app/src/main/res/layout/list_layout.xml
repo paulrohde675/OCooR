@@ -35,6 +35,21 @@
             tool:text="sample" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:minWidth="0dp"
+            app:icon="@drawable/ic_baseline_delete_24"
+            app:iconTint="?attr/colorSecondary"
+            android:elevation="8dp"
+            app:iconPadding="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_cloud"
+            app:layout_constraintTop_toTopOf="parent">
+        </com.google.android.material.button.MaterialButton>
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_cloud"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
