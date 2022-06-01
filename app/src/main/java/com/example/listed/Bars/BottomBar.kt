@@ -1,6 +1,5 @@
-package Bars
+package com.example.listed.Bars
 
-import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.widget.Toast

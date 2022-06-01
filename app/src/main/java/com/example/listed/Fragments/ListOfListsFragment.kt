@@ -1,6 +1,6 @@
 package com.example.listed.Fragments
 
-import Bars.BottomBar
+import com.example.listed.Bars.BottomBar
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,14 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ocoor.Adapter.InactiveItemAdapter
-import com.example.ocoor.Adapter.ItemAdapter
 import com.example.ocoor.Adapter.ItemListAdapter
 import com.example.ocoor.MainActivity
-import com.example.ocoor.R
-import com.example.ocoor.databinding.ActiveRecyclerViewFragmentBinding
 import com.example.ocoor.databinding.FragmentListOfListsBinding
-import java.util.Observer
 
 class ListOfListsFragment : Fragment() {
 

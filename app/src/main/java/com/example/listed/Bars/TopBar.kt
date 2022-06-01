@@ -1,12 +1,9 @@
-package Bars
+package com.example.listed.Bars
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import com.example.listed.Fragments.ListOfListsFragment
-import com.example.ocoor.Fragments.AddItemFragment
-import com.example.ocoor.Fragments.AddListFragment
 import com.example.ocoor.MainActivity
 import com.example.ocoor.R
 import com.example.ocoor.Utils.SingletonHolder

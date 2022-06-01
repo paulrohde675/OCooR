@@ -27,6 +27,7 @@ class ItemListAdapter(
     RecyclerView.Adapter<ItemListAdapter.ItemListViewHolder>() {
 
     // variables
+    private val dbif = mainActivity.dbif
     var mRecyclerView: RecyclerView? = null
     var selectedList: com.google.android.material.card.MaterialCardView? = null
 
@@ -112,8 +113,6 @@ class ItemListAdapter(
         btnCloud.setOnClickListener {
             // change cloud flag
             if(itemList.cloud == 0){
-                itemList.cloud = 1
-                mItemListViewModel.addItemList(itemList)
                 btnCloud.setIconResource(R.drawable.ic_baseline_cloud_full_24)
                 btnCloud.invalidate()
 
@@ -204,7 +203,7 @@ class ItemListAdapter(
             ) {
                 val pos = viewHolder.adapterPosition
                 val swipedList = itemListOfLists[pos]
-                mItemListViewModel.rmItemList(swipedList)
+                dbif.deleteList(swipedList)
             }
 
             override fun clearView(

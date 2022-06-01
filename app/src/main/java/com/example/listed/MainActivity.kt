@@ -4,8 +4,8 @@ package com.example.ocoor
 //import java.util.*
 
 import Authentication.LoginGoogle
-import Bars.BottomBar
-import Bars.TopBar
+import com.example.listed.Bars.BottomBar
+import com.example.listed.Bars.TopBar
 import FireBase.FireBaseUtil
 import android.annotation.SuppressLint
 import android.content.*
@@ -51,7 +51,6 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
-import kotlinx.android.synthetic.main.main_activity.*
 import java.io.File
 import java.util.regex.Matcher
 import java.util.regex.Pattern

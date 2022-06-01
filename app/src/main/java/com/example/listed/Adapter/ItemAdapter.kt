@@ -23,6 +23,7 @@ class ItemAdapter(
     RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
 
     // variables
+    private val dbif = mainActivity.dbif
     var mRecyclerView: RecyclerView? = null
     var selectedItem: com.google.android.material.card.MaterialCardView? = null
 
@@ -75,7 +76,7 @@ class ItemAdapter(
             itemList[position].status = holder.binding.itemCheckbox.isChecked.toString()
             val newItem = itemList[position]
             newItem.status = "True"
-            mItemViewModel.addItem(newItem)
+            dbif.addItem(newItem)
         }
 
         //
@@ -154,10 +155,9 @@ class ItemAdapter(
             UP or DOWN, LEFT or RIGHT
         ) {
 
-
-
             var start_swap: Int = 9999
             var end_swap: Int = 0
+            var swaped: Boolean = false
 
             override fun onMove(
                 recyclerView: RecyclerView,
@@ -173,6 +173,7 @@ class ItemAdapter(
                 itemList[to].id = dummy_item_id
                 Collections.swap(itemList, from, to)
 
+                swaped = true
                 if (from < start_swap) start_swap = from
                 if (to < start_swap) start_swap = to
                 if (from > end_swap) start_swap = from
@@ -197,7 +198,7 @@ class ItemAdapter(
                 val pos = viewHolder.adapterPosition
                 val newItem = itemList[pos]
                 newItem.status = "True"
-                mItemViewModel.addItem(newItem)
+                dbif.addItem(newItem)
             }
 
             override fun clearView(
@@ -207,7 +208,9 @@ class ItemAdapter(
                 super.clearView(recyclerView, viewHolder);
                 // [7] Do something when the interaction with an item
                 // Update Room Database
-                mItemViewModel.addItemList(itemList.slice(start_swap..end_swap))
+                if(swaped){
+                    dbif.addItems(itemList.slice(start_swap..end_swap))
+                }
             }
         }
 }

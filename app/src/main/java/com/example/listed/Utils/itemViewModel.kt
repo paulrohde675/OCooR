@@ -34,11 +34,13 @@ class ItemViewModel(application: Application): AndroidViewModel(application) {
     }
 
     fun rmItems(itemList: ItemList){
-        val items = readAllData.value?.filter { it.id == itemList.id }
-
+        // get all items from itemList
+        val items = readAllData.value?.filter { it.list_id == itemList.id }
         if(items != null){
+            // get id from items
             val idList: List<Int> = items.stream().map(Item::id).collect(Collectors.toList()) as List<Int>
 
+            // remove items
             viewModelScope.launch (Dispatchers.IO){
                 repository.rmItems(idList)
             }

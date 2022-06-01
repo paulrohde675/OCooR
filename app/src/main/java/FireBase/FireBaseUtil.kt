@@ -7,6 +7,7 @@ import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
 import com.example.ocoor.MainActivity
 import com.example.ocoor.Utils.Item
+import com.example.ocoor.Utils.ItemList
 import com.example.ocoor.Utils.SingletonHolder
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -52,20 +53,41 @@ class FireBaseUtil(val context: Context) {
                 return
             }
 
-            val itemMap = hashMapOf<String, Any>(
-                "id" to item.id,
-                "status" to item.status,
-                "unit" to item.unit,
-                "itemText" to item.itemText,
-                "amount" to item.amount,
-                "good" to item.good,
-            )
-            db.collection("lists").document(itemList.fid).collection("items").document(item.id.toString()).set(itemMap)
+            db.collection("lists").document(itemList.fid).collection("items").document(item.id.toString()).set(item)
+        }
+    }
+
+    fun deleteItem(item: Item){
+        // Delete single item to firebase
+        val itemList = mItemListViewModel.readAllData.value?.filter { it.id == item.list_id }?.get(0)
+        if(itemList != null){
+
+            // check if itemList is synced
+            if(itemList.fid == ""){
+                return
+            }
+
+            db.collection("lists").document(itemList.fid).collection("items").document(item.id.toString()).delete()
+        }
+    }
+
+    fun uploadItems(items : List<Item>){
+        // Add single item to firebase
+
+        val itemList = mItemListViewModel.readAllData.value?.filter { it.id == items[0].list_id }?.get(0)
+        if(itemList != null){
+
+            // check if itemList is synced
+            if(itemList.fid == ""){
+                return
+            }
+            for (item in items){
+                db.collection("lists").document(itemList.fid).collection("items").document(item.id.toString()).set(item)
+            }
         }
     }
 
     fun uploadList(itemListID:Int){
-
         val itemList = mItemListViewModel.readAllData.value?.filter { it.id == itemListID }?.get(0)
         if(itemList != null){
 
@@ -81,39 +103,72 @@ class FireBaseUtil(val context: Context) {
             newItemList.set(itemList)
 
             // add firebase id to itemList
+            itemList.cloud = 1
             itemList.fid = newItemList.id
             mItemListViewModel.addItemList(itemList)
 
             // init list data
-            val itemList = hashMapOf<String, Any>(
-                "name" to itemList.name,
-                "id" to itemList.id,
-            )
+            //val itemListMap = hashMapOf<String, Any>(
+            //    "name" to itemList.name,
+            //    "id" to itemList.id,
+            //)
 
             // get list items
-            val items = mItemViewModel.readAllData.value!!.filter {item -> item.status == "False" && item.list_id == itemListID}
+            val items = mItemViewModel.readAllData.value!!.filter {item -> item.list_id == itemListID}
 
             // add items to new list in firestore
             for (item in items){
                 // init item map
-                val itemMap = hashMapOf<String, Any>(
-                    "id" to item.id,
-                    "status" to item.status,
-                    "unit" to item.itemText,
-                    "amount" to item.amount,
-                    "good" to item.good,
-                )
+                //val itemMap = hashMapOf<String, Any>(
+                //    "id" to item.id,
+                //    "status" to item.status,
+                //    "unit" to item.itemText,
+                //    "amount" to item.amount,
+                //    "good" to item.good,
+                //)
 
                 // add item to new list in firestore
-                newItemList.collection("items").add(itemMap)
+                newItemList.collection("items").document(item.id.toString()).set(item)
                     .addOnSuccessListener {
-                        Log.d(TAG, "Added item with ID ${it.id}")
+                        Log.d(TAG, "Added item with ID ${item.id}")
                     }
                     .addOnFailureListener { exception ->
                         Log.w(TAG, "Error adding document $exception")
                     }
             }
         }
+    }
+
+    fun rmList(itemList: ItemList) {
+
+        // Check if already in cloud
+        if (itemList.cloud == 0) {
+            return
+        }
+
+        val itemListID = itemList.id
+
+        // get items from local itemList
+        val locItems = mItemViewModel.readAllData.value!!.filter {item -> item.list_id == itemListID}
+
+        // get firestore list reference
+        val fItemList = db.collection("lists").document(itemList.fid)
+
+        // add items to new list in firestore
+        for (locItem in locItems){
+
+            // delete item from list in firestore
+            fItemList.collection("items").document(locItem.id.toString()).delete()
+                .addOnSuccessListener {
+                    Log.d(TAG, "Deleted item with ID ${locItem.id}")
+                }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error adding document $exception")
+                }
+        }
+
+        // delete list in firestore
+        fItemList.delete()
     }
 }
 

@@ -12,21 +12,33 @@ class DataBaseInterface(val context: Context) {
     companion object : SingletonHolder<DataBaseInterface, Context>(::DataBaseInterface)
     val mainActivity = context as MainActivity
 
-    val mItemViewModel = mainActivity.mItemViewModel
-    val mItemListViewModel = mainActivity.mItemListViewModel
-    val fireBaseUtil = mainActivity.fireBaseUtil
+    private val mItemViewModel = mainActivity.mItemViewModel
+    private val mItemListViewModel = mainActivity.mItemListViewModel
+    private val fireBaseUtil = mainActivity.fireBaseUtil
 
     fun addItem(item: Item){
         mItemViewModel.addItem(item)
         fireBaseUtil.uploadItem(item)
     }
 
+    fun addItems(items : List<Item>){
+        mItemViewModel.addItemList (items)
+        fireBaseUtil.uploadItems(items)
+    }
+
+    fun deleteItem(item: Item){
+        fireBaseUtil.deleteItem(item)
+        mItemViewModel.rmItem(item)
+    }
+
     fun deleteList(itemList: ItemList){
-        //val itemListID = itemList.id
-        //mItemViewModel.readAllData.value?.filter { it.id == itemListID }
+
+        // delete data from firestore
+        fireBaseUtil.rmList(itemList)
+        // delete items
         mItemViewModel.rmItems(itemList)
-
-
+        // delete itemList
+        mItemListViewModel.rmItemList(itemList)
     }
 
 }
