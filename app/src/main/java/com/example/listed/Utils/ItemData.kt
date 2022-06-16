@@ -8,6 +8,7 @@ import androidx.room.*
 data class Item(
     @PrimaryKey(autoGenerate = true) var id: Int, //
     @ColumnInfo(name = "status") var status: String = "False",
+    @ColumnInfo(name = "fid") var fid: String = "",
     @ColumnInfo(name = "list_id") var list_id: Int,
     @ColumnInfo(name = "itemText") val itemText: String = "",
     @ColumnInfo(name = "unit") var unit: String = "",
@@ -27,7 +28,7 @@ interface ItemDao {
     fun getItemById(getId: Int): Item?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE) //REPLACE //IGNORE
-    fun addItem(item: Item)
+    fun addItem(item: Item) : Long
 
     @Query("SELECT * FROM item ORDER BY id DESC")
     fun readAllData(): LiveData<List<Item>>
@@ -52,8 +53,8 @@ class ItemRepository(private val itemDao: ItemDao){
 
     val readAllData: LiveData<List<Item>> = itemDao.readAllData()
 
-    suspend fun addItem(item:Item){
-        itemDao.addItem(item)
+    suspend fun addItem(item:Item): Int{
+        return itemDao.addItem(item).toInt()
     }
 
     suspend fun getItem(getId:Int) : Item?{

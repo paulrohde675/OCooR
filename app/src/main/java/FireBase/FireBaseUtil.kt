@@ -9,6 +9,9 @@ import com.example.ocoor.MainActivity
 import com.example.ocoor.Utils.Item
 import com.example.ocoor.Utils.ItemList
 import com.example.ocoor.Utils.SingletonHolder
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
@@ -16,30 +19,52 @@ import com.google.firebase.ktx.Firebase
 class FireBaseUtil(val context: Context) {
     companion object : SingletonHolder<FireBaseUtil, Context>(::FireBaseUtil)
     //val fireStoreDatabase = FirebaseFirestore.getInstance()
-    val db = Firebase.firestore
+    var db : FirebaseFirestore = FirebaseFirestore.getInstance()
     val mainActivity = context as MainActivity
     val mItemViewModel = mainActivity.mItemViewModel
     val mItemListViewModel = mainActivity.mItemListViewModel
 
-    fun uploadData() {
-        // create a dummy data
-        val hashMap = hashMapOf<String, Any>(
-            "first_name" to "John",
-            "last_name" to "John",
-            "email" to "test@test.com",
-            "id" to 24
-        )
+    init {
+        //db = Firebase.firestore
+        Log.d("firebase", "Init Firebase")
+        Log.d("firebase", "userID: ${mainActivity.userID}")
+        addLiveDataListener()
+    }
 
-        println("Test Firebase")
+    private fun addLiveDataListener(){
+        db.collection("lists")
+            .whereArrayContains("collab", mainActivity.userID!!)
+            .addSnapshotListener(mainActivity) { snapshots, e ->
 
-        // use the add() method to create a document inside users collection
-        db.collection("users")
-            .add(hashMap)
-            .addOnSuccessListener {
-                Log.d(TAG, "Added document with ID ${it.id}")
+                if (e != null) {
+                    Log.w(TAG, "listen:error", e)
+                    return@addSnapshotListener
+                }
+
+                for (dc in snapshots!!.documentChanges) {
+                    when (dc.type) {
+                        DocumentChange.Type.ADDED -> Log.d(TAG, "New city: ${dc.document.data}")
+                        DocumentChange.Type.MODIFIED -> Log.d(TAG, "Modified city: ${dc.document.data}")
+                        DocumentChange.Type.REMOVED -> Log.d(TAG, "Removed city: ${dc.document.data}")
+                    }
+                }
             }
-            .addOnFailureListener { exception ->
-                Log.w(TAG, "Error adding document $exception")
+
+        db.collection("lists")
+            .whereEqualTo("userID", mainActivity.userID!!)
+            .addSnapshotListener(mainActivity) { snapshots, e ->
+                if (e != null) {
+                    Log.w(TAG, "listen:error", e)
+                    return@addSnapshotListener
+                }
+
+                for (dc in snapshots!!.documentChanges) {
+                    when (dc.type) {
+                        DocumentChange.Type.ADDED -> Log.d(TAG, "New city: ${dc.document.data}")
+                        DocumentChange.Type.MODIFIED -> Log.d(TAG, "Modified city: ${dc.document.data}")
+                        DocumentChange.Type.REMOVED -> Log.d(TAG, "Removed city: ${dc.document.data}")
+                    }
+                }
             }
     }
 
@@ -53,7 +78,12 @@ class FireBaseUtil(val context: Context) {
                 return
             }
 
-            db.collection("lists").document(itemList.fid).collection("items").document(item.id.toString()).set(item)
+            val newItem = db.collection("lists").document(itemList.fid).collection("items").document()
+            newItem.set(item)
+
+            // update item
+            item.fid = newItem.id
+            mItemViewModel.addItem(item)
         }
     }
 
@@ -87,56 +117,60 @@ class FireBaseUtil(val context: Context) {
         }
     }
 
-    fun uploadList(itemListID:Int){
-        val itemList = mItemListViewModel.readAllData.value?.filter { it.id == itemListID }?.get(0)
-        if(itemList != null){
+    fun uploadList(itemList: ItemList){
+        val itemListID = itemList.id
 
-            // Check if already in cloud
-            if(itemList.cloud == 1){
-                return
-            }
-
-            // init new list on firestore
-            //------------------------------------------------
-            // add list to firestore
-            val newItemList = db.collection("lists").document()
-            newItemList.set(itemList)
-
-            // add firebase id to itemList
-            itemList.cloud = 1
-            itemList.fid = newItemList.id
-            mItemListViewModel.addItemList(itemList)
-
-            // init list data
-            //val itemListMap = hashMapOf<String, Any>(
-            //    "name" to itemList.name,
-            //    "id" to itemList.id,
-            //)
-
-            // get list items
-            val items = mItemViewModel.readAllData.value!!.filter {item -> item.list_id == itemListID}
-
-            // add items to new list in firestore
-            for (item in items){
-                // init item map
-                //val itemMap = hashMapOf<String, Any>(
-                //    "id" to item.id,
-                //    "status" to item.status,
-                //    "unit" to item.itemText,
-                //    "amount" to item.amount,
-                //    "good" to item.good,
-                //)
-
-                // add item to new list in firestore
-                newItemList.collection("items").document(item.id.toString()).set(item)
-                    .addOnSuccessListener {
-                        Log.d(TAG, "Added item with ID ${item.id}")
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.w(TAG, "Error adding document $exception")
-                    }
-            }
+        // Check if already in cloud
+        if(itemList.cloud == 1){
+            return
         }
+
+        if (mainActivity.userID == null){
+            println("No UserID found!")
+            return
+        }
+
+        // update itemList
+        itemList.cloud = 1
+        itemList.userID = mainActivity.userID!!
+        itemList.collab.add(mainActivity.userID!!)
+
+        // init new list on firestore
+        //------------------------------------------------
+        // add list to firestore
+        val newItemList = db.collection("lists").document()
+        newItemList.set(itemList)
+
+        // add firebase id to itemList
+        itemList.fid = newItemList.id
+        mItemListViewModel.addItemList(itemList) // this write statement could probably be omitted
+
+        // get list items
+        val items = mItemViewModel.readAllData.value!!.filter {item -> item.list_id == itemListID}
+
+        // add items to new list in firestore
+        for (item in items){
+
+            // add item to new list in firestore
+            newItemList.collection("items").document(item.id.toString()).set(item)
+                .addOnSuccessListener {
+                    Log.d(TAG, "Added item with ID ${item.id}")
+                }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error adding document $exception")
+                }
+        }
+    }
+
+    fun modifyList(itemList: ItemList){
+        // Check if already in cloud
+        if (itemList.cloud == 0) {
+            return
+        }
+
+        // get firestore list reference
+        val fItemList = db.collection("lists").document(itemList.fid)
+        fItemList.set(itemList)
     }
 
     fun rmList(itemList: ItemList) {

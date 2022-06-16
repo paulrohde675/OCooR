@@ -17,28 +17,38 @@ class DataBaseInterface(val context: Context) {
     private val fireBaseUtil = mainActivity.fireBaseUtil
 
     fun addItem(item: Item){
-        mItemViewModel.addItem(item)
-        fireBaseUtil.uploadItem(item)
+        val id: Int? = mItemViewModel.addItem(item)
+        if(id != null){
+            item.id = id
+            fireBaseUtil?.uploadItem(item)
+        }
     }
 
     fun addItems(items : List<Item>){
         mItemViewModel.addItemList (items)
-        fireBaseUtil.uploadItems(items)
+        fireBaseUtil?.uploadItems(items)
     }
 
     fun deleteItem(item: Item){
-        fireBaseUtil.deleteItem(item)
+        fireBaseUtil?.deleteItem(item)
         mItemViewModel.rmItem(item)
     }
 
     fun deleteList(itemList: ItemList){
 
         // delete data from firestore
-        fireBaseUtil.rmList(itemList)
+        fireBaseUtil?.rmList(itemList)
         // delete items
         mItemViewModel.rmItems(itemList)
         // delete itemList
         mItemListViewModel.rmItemList(itemList)
+    }
+
+    fun modifyItemList(itemList: ItemList){
+        // save changes locally
+        mItemListViewModel.addItemList(itemList)
+        // save changes in firebase
+        fireBaseUtil?.modifyList(itemList)
     }
 
 }

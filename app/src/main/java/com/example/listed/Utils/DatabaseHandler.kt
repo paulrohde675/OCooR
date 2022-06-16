@@ -4,8 +4,22 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.RoomDatabase
+import com.google.gson.Gson
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import java.lang.reflect.Array
+
+class Converters {
+    @TypeConverter
+    fun fromList(value : ArrayList<String>) = Json.encodeToString(value)
+
+    @TypeConverter
+    fun toList(value: String) = Json.decodeFromString<ArrayList<String>>(value)
+}
 
 @Database(entities = [Item::class, ItemList::class, SettingData::class], version = 1)
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun itemDao(): ItemDao
     abstract fun itemListDao(): ItemListDao

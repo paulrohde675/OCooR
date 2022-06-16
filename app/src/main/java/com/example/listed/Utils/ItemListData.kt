@@ -1,8 +1,8 @@
 package com.example.ocoor.Utils
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.room.*
+
 
 @Entity(tableName = "item_list_data")
 data class ItemList(
@@ -10,6 +10,8 @@ data class ItemList(
     @ColumnInfo(name = "name") var name: String = "My List",
     @ColumnInfo(name = "cloud") var cloud: Int = 0,
     @ColumnInfo(name = "fid") var fid: String = "",
+    @ColumnInfo(name = "userID") var userID: String = "",
+    @ColumnInfo(name = "collab") var collab: ArrayList<String> = ArrayList(),
 )
 
 @Dao

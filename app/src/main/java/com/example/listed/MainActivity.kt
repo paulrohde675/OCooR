@@ -104,13 +104,18 @@ class MainActivity : AppCompatActivity() {
     lateinit var mItemListViewModel: ItemListViewModel
     lateinit var settingViewModel: SettingViewModel
 
+    // login
+    lateinit var gAuth: FirebaseAuth
+    lateinit var loginGoogle : LoginGoogle
+    lateinit var googleSignInClient: GoogleSignInClient
+    var cloud = false
+
     // firebase
     lateinit var dbif: DataBaseInterface
-    lateinit var gAuth: FirebaseAuth
-    lateinit var googleSignInClient: GoogleSignInClient
-    lateinit var oneTapClient: SignInClient
-    lateinit var loginGoogle : LoginGoogle
-    lateinit var fireBaseUtil : FireBaseUtil
+    var fireBaseUtil: FireBaseUtil? = null
+
+    // User
+    var userID : String? = null
 
     // permissions
     val requestPermissionLauncher =
@@ -232,16 +237,13 @@ class MainActivity : AppCompatActivity() {
         // init bottom bar
         BottomBar(this).setBottomBarMainScreen()
 
-        //FireBase
+        // login
         gAuth = Firebase.auth
         loginGoogle = LoginGoogle(this)
-        loginGoogle.oneClickSetup()
-        loginGoogle.signIn()
-        fireBaseUtil = FireBaseUtil(this)
+        //loginGoogle.signIn()
+
+        // FireBase
         dbif = DataBaseInterface(this)
-
-
-
     }
 
     override fun onStart() {

@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.example.ocoor.Units.BaseUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.internal.wait
 import okio.utf8Size
 import java.util.stream.Collectors
 
@@ -19,10 +20,12 @@ class ItemViewModel(application: Application): AndroidViewModel(application) {
         readAllData = repository.readAllData
     }
 
-    fun addItem(item: Item){
+    fun addItem(item: Item): Int?{
+        var id : Int? = null
         viewModelScope.launch (Dispatchers.IO){
-            repository.addItem(item)
+            id = repository.addItem(item)
         }
+        return id
     }
 
     fun addItemList(items : List<Item>){

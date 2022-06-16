@@ -21,7 +21,7 @@
 
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/item_tv_good"
+            android:id="@+id/tv_list_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -29,7 +29,6 @@
             android:longClickable="true"
             android:textSize="20sp"
             android:paddingStart="15dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tool:text="sample" />
@@ -44,7 +43,6 @@
             app:iconTint="?attr/colorSecondary"
             android:elevation="8dp"
             app:iconPadding="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btn_cloud"
             app:layout_constraintTop_toTopOf="parent">
         </com.google.android.material.button.MaterialButton>
@@ -59,11 +57,39 @@
             app:iconTint="?attr/colorSecondary"
             android:elevation="8dp"
             app:iconPadding="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
         </com.google.android.material.button.MaterialButton>
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_enter_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_list_name"
+            android:hint="@string/user_name"
+            android:visibility="gone"
+            >
+        </com.google.android.material.textfield.TextInputEditText>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_share_with_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="Add"
+            app:layout_constraintTop_toBottomOf="@+id/btn_cloud"
+            android:visibility="gone"
+            >
+
+        </com.google.android.material.button.MaterialButton>
+
+
+
+
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

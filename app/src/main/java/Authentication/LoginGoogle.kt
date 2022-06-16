@@ -1,5 +1,6 @@
 package Authentication
 
+import FireBase.FireBaseUtil
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -25,86 +26,48 @@ class LoginGoogle(val context: Context) {
     companion object : SingletonHolder<LoginGoogle, Context>(::LoginGoogle)
     val mainActivity = context as MainActivity
     private var gAuth = mainActivity.gAuth
-
-
-    //private lateinit var signInRequest: BeginSignInRequest
-
     var REQ_ONE_TAP = 101
 
-    // signin
+    // start signin
     fun signIn() {
-        val signInIntent = mainActivity.googleSignInClient.signInIntent
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("967690084390-rtcfpcopo2q85hd7qle05ttbj43bmm6j.apps.googleusercontent.com")
+            .requestEmail()
+            .build()
+        val googleSignInClient = GoogleSignIn.getClient(mainActivity, gso)
+
+        // init intent
+        val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(mainActivity, signInIntent, REQ_ONE_TAP, null)
     }
 
+    // signout
     fun signOut() {
         gAuth.signOut()
     }
 
-
-    // [START auth_with_google]
+    // signin process
     fun firebaseAuthWithGoogle(idToken: String) {
+        // beeing called during the intent
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         gAuth.signInWithCredential(credential)
             .addOnCompleteListener(mainActivity) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
-                    val user = gAuth.currentUser
-                    //updateUI(user)
+
+                    // store logged user
+                    mainActivity.userID = gAuth.currentUser?.email
+                    Log.i("login", "Logging in User: ${mainActivity.userID}")
+
+                    // init firebase
+                    mainActivity.fireBaseUtil = FireBaseUtil(mainActivity)
+
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    //updateUI(null)
                 }
             }
     }
-
-    fun oneClickSetup() {
-
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("967690084390-rtcfpcopo2q85hd7qle05ttbj43bmm6j.apps.googleusercontent.com")
-            .requestEmail()
-            .build()
-
-        mainActivity.googleSignInClient = GoogleSignIn.getClient(mainActivity, gso)
-
-        /*
-
-        mainActivity.oneTapClient = Identity.getSignInClient(mainActivity)
-
-        signInRequest = BeginSignInRequest.builder()
-            .setGoogleIdTokenRequestOptions(
-                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                    .setSupported(true)
-                    // Your server's client ID, not your Android client ID.
-                    .setServerClientId("967690084390-v86o6atgodaiomvfsp2tj1vjuvq0arji.apps.googleusercontent.com")
-                    // Only show accounts previously used to sign in.
-                    .setFilterByAuthorizedAccounts(true)
-                    .build()
-            )
-            .build()
-
-        mainActivity.oneTapClient.beginSignIn(signInRequest)
-            .addOnSuccessListener(mainActivity) { result ->
-                try {
-                    startIntentSenderForResult(
-                        mainActivity,
-                        result.pendingIntent.intentSender, REQ_ONE_TAP,
-                        null, 0, 0, 0, null
-                    )
-                } catch (e: IntentSender.SendIntentException) {
-                    Log.e(TAG, "Couldn't start One Tap UI: ${e.localizedMessage}")
-                }
-            }
-            .addOnFailureListener(mainActivity) { e ->
-                // No saved credentials found. Launch the One Tap sign-up flow, or
-                // do nothing and continue presenting the signed-out UI.
-                Log.d(TAG, e.localizedMessage)
-            }
-
-         */
-
-    }
-
 }

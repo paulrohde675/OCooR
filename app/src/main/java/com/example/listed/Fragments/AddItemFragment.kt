@@ -111,8 +111,6 @@ class AddItemFragment: Fragment() {
         }
 
         binding.textInputEditText.setText(initText)
-        println("Set inactive rv invisible")
-
         // Set the inactive recylerView invisible if AddItems is opend
         val layout : RecyclerView = mainActivity.findViewById(R.id.inactiveRecyclerView)
         layout.visibility = View.GONE

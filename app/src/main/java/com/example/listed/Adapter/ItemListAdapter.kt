@@ -1,7 +1,10 @@
 package com.example.ocoor.Adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
@@ -15,6 +18,7 @@ import com.example.ocoor.Utils.ItemListViewModel
 import com.example.ocoor.Utils.ItemViewModel
 import com.example.ocoor.databinding.ItemLayoutBinding
 import com.example.ocoor.databinding.ListLayoutBinding
+import kotlinx.android.synthetic.main.list_layout.view.*
 import java.text.DecimalFormat
 import java.util.*
 
@@ -29,7 +33,8 @@ class ItemListAdapter(
     // variables
     private val dbif = mainActivity.dbif
     var mRecyclerView: RecyclerView? = null
-    var selectedList: com.google.android.material.card.MaterialCardView? = null
+    var selectedListView: com.google.android.material.card.MaterialCardView? = null
+    var selectedList: ItemList? = null
 
     inner class ItemListViewHolder(val binding: ListLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -60,7 +65,7 @@ class ItemListAdapter(
         val dec = DecimalFormat("#,###.##")
 
         val currentItemList = itemListOfLists[position]
-        holder.binding.itemTvGood.text = currentItemList.name
+        holder.binding.tvListName.text = currentItemList.name
 
 
         // handle click on item in RV
@@ -74,6 +79,7 @@ class ItemListAdapter(
 
                 settings.selected_list_id = currentItemList.id
                 mainActivity.settingViewModel.updateSettings(settings)
+                selectedList = currentItemList
 
                 // remove frame if new item is selected
                 //----------------------------------------------
@@ -84,7 +90,7 @@ class ItemListAdapter(
                 activateItemFrame(holder.binding.cvItem)
 
                 // go back to main activity
-                mainActivity.onBackPressed();
+                //mainActivity.onBackPressed();
             }
         }
 
@@ -104,24 +110,48 @@ class ItemListAdapter(
         // Set delete button
         //------------------------------------------------------------------------------------------
         holder.binding.btnDelete.setOnClickListener {
-            println("Delete List")
             mainActivity.dbif.deleteList(itemList)
         }
 
         // Set cloud button
         //------------------------------------------------------------------------------------------
         btnCloud.setOnClickListener {
-            // change cloud flag
-            if(itemList.cloud == 0){
-                btnCloud.setIconResource(R.drawable.ic_baseline_cloud_full_24)
-                btnCloud.invalidate()
+            // if user is logged in: upload list to cloud
+            if(mainActivity.userID != null){
+                // change cloud flag
+                if(itemList.cloud == 0){
+                    btnCloud.setIconResource(R.drawable.ic_baseline_cloud_full_24)
+                    btnCloud.invalidate()
 
-                // Upload List
-                mainActivity.fireBaseUtil.uploadList(currentItemList.id)
+                    // Upload List
+                    mainActivity.fireBaseUtil?.uploadList(currentItemList)
+                }
+            }
+            else{ // start login
+                mainActivity.loginGoogle.signIn()
             }
         }
 
-        //println("List: ${currentItemList.id} | ${mainActivity.settingViewModel.readAllData.value!!.selected_list_id}")
+        // add collab button to add users to share the itemList with
+        val btnCollab = holder.binding.btnShareWithUser
+        val etCollab = holder.binding.etEnterUser
+        btnCollab.setOnClickListener{
+            val newUserId = etCollab.text.toString().trim().lowercase()
+            if (newUserId.isBlank()) {
+                Toast.makeText(mainActivity, "You did not enter an User", Toast.LENGTH_SHORT).show()
+            } // else: add item
+            else {
+                val collaborators = currentItemList.collab
+                if (!collaborators.contains(newUserId)) {
+                    collaborators.add(newUserId)
+                }
+                currentItemList.collab = collaborators
+                dbif.modifyItemList(currentItemList)
+                etCollab.text?.clear()
+            }
+        }
+
+        // activate frame when itemList is added
         if(currentItemList.id == mainActivity.settingViewModel.readAllData.value!!.selected_list_id){
             // remove frame if new item is selected
             //----------------------------------------------
@@ -130,20 +160,35 @@ class ItemListAdapter(
             // add frame to selected item
             //----------------------------------------------
             activateItemFrame(holder.binding.cvItem)
+
+            // expand list
+            //----------------------------------------------
         }
+
+
+
     }
 
     fun activateItemFrame(itemCardView: com.google.android.material.card.MaterialCardView?) {
+        selectedListView = itemCardView
+        println("cloud ${selectedList?.cloud}")
+        if(selectedList?.cloud == 1) {
+            itemCardView?.et_enter_user?.visibility = View.VISIBLE
+            itemCardView?.btn_share_with_user?.visibility = View.VISIBLE
+        }
         itemCardView?.strokeWidth = 8
         itemCardView?.invalidate()
-        selectedList = itemCardView
     }
 
     fun deactivateItemFrame() {
         println("Deselect list: ${selectedList}")
-        if (selectedList != null) {
-            selectedList!!.strokeWidth = 0
-            selectedList!!.invalidate()
+        if (selectedListView != null) {
+
+            selectedListView!!.et_enter_user.visibility = View.GONE
+            selectedListView!!.btn_share_with_user.visibility = View.GONE
+
+            selectedListView!!.strokeWidth = 0
+            selectedListView!!.invalidate()
         }
     }
 
