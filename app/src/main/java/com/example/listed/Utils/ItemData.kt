@@ -9,12 +9,38 @@ data class Item(
     @PrimaryKey(autoGenerate = true) var id: Int, //
     @ColumnInfo(name = "status") var status: String = "False",
     @ColumnInfo(name = "fid") var fid: String = "",
+    @ColumnInfo(name = "list_fid") var list_fid: String = "",
     @ColumnInfo(name = "list_id") var list_id: Int,
     @ColumnInfo(name = "itemText") val itemText: String = "",
     @ColumnInfo(name = "unit") var unit: String = "",
     @ColumnInfo(name = "amount") var amount: Float = 1f,
     @ColumnInfo(name = "good") var good: String = ""
-)
+) {
+    companion object {
+        fun from(map: Map<String, Any>) = object {
+            val id = 0
+            val status = map["status"] as String
+            val fid = map["fid"] as String
+            val list_fid = map["list_fid"] as String
+            val list_id = map["list_id"] as Long
+            val itemText = map["itemText"] as String
+            val unit = map["unit"] as String
+            val amount = map["amount"] as Double
+            val good = map["good"] as String
+            val data = Item(
+                    id = id,
+                    status = status,
+                    fid = fid,
+                    list_fid = list_fid,
+                    list_id = list_id.toInt(),
+                    itemText = itemText,
+                    unit = unit,
+                    amount = amount.toFloat(),
+                    good = good,
+                )
+        }.data
+    }
+}
 
 @Dao
 interface ItemDao {

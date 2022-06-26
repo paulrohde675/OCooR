@@ -1,10 +1,14 @@
 package com.example.ocoor.Adapter
 
+import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
+import com.example.listed.Utils.ImageDataBase
 import com.example.ocoor.Fragments.AddItemFragment
 import com.example.ocoor.MainActivity
 import com.example.ocoor.R
@@ -26,6 +30,7 @@ class ItemAdapter(
     private val dbif = mainActivity.dbif
     var mRecyclerView: RecyclerView? = null
     var selectedItem: com.google.android.material.card.MaterialCardView? = null
+    val imageDB = ImageDataBase(mainActivity).imageNames
 
     inner class ItemViewHolder(val binding: ItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -117,6 +122,23 @@ class ItemAdapter(
             //----------------------------------------------
             activateItemFrame(holder.binding.cvItem)
         }
+
+        // search image in db
+        var imageName = imageDB[currentItem.good.lowercase().trim()]
+        if(imageName == null){
+            imageName = imageDB[currentItem.good.lowercase().trim().dropLast(1)]
+        }
+        if(imageName == null){
+            imageName = "bu_image"
+        }
+
+        // add item image
+        val id = mainActivity.resources.getIdentifier(imageName, "drawable",
+            mainActivity.packageName
+        )
+        holder.binding.imageView.setImageResource(id)
+        holder.binding.imageView.visibility = View.VISIBLE
+
     }
 
     fun activateItemFrame(itemCardView: com.google.android.material.card.MaterialCardView?) {

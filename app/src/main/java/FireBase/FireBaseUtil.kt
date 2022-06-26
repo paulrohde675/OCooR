@@ -23,15 +23,17 @@ class FireBaseUtil(val context: Context) {
     val mainActivity = context as MainActivity
     val mItemViewModel = mainActivity.mItemViewModel
     val mItemListViewModel = mainActivity.mItemListViewModel
+    var fids = arrayListOf<String>()
 
     init {
-        //db = Firebase.firestore
         Log.d("firebase", "Init Firebase")
         Log.d("firebase", "userID: ${mainActivity.userID}")
         addLiveDataListener()
     }
 
     private fun addLiveDataListener(){
+
+        // add itemList listener
         db.collection("lists")
             .whereArrayContains("collab", mainActivity.userID!!)
             .addSnapshotListener(mainActivity) { snapshots, e ->
@@ -43,16 +45,78 @@ class FireBaseUtil(val context: Context) {
 
                 for (dc in snapshots!!.documentChanges) {
                     when (dc.type) {
-                        DocumentChange.Type.ADDED -> Log.d(TAG, "New city: ${dc.document.data}")
-                        DocumentChange.Type.MODIFIED -> Log.d(TAG, "Modified city: ${dc.document.data}")
-                        DocumentChange.Type.REMOVED -> Log.d(TAG, "Removed city: ${dc.document.data}")
+                        DocumentChange.Type.ADDED -> {
+                            // get new itemList
+                            val itemList = ItemList.from(dc.document.data)
+                            itemList.fid = dc.document.id
+
+                            // if the itemlist is new: set listener to its items
+                            if (!fids.contains(itemList.fid)){
+                                fids.add(itemList.fid)
+                                addListenerForFid(itemList.fid)
+                                refreshItems(itemList.fid)
+                            }
+
+                            // save new itemList
+                            downloadItemList(itemList)
+                        }
+                        DocumentChange.Type.MODIFIED -> {
+                            // get new itemList
+                            val itemList = ItemList.from(dc.document.data)
+                            itemList.fid = dc.document.id
+
+                            // if the itemlist is new: set listener to its items
+                            if (!fids.contains(itemList.fid)){
+                                fids.add(itemList.fid)
+                                addListenerForFid(itemList.fid)
+                                refreshItems(itemList.fid)
+                            }
+
+                            // save new itemList
+                            downloadItemList(itemList)
+                        }
+                        DocumentChange.Type.REMOVED -> {
+
+                            Log.d(TAG, "Delete ItemList")
+
+                            // get item to delete
+                            val itemList = ItemList.from(dc.document.data)
+                            itemList.fid = dc.document.id
+
+                            // delete itemList
+                            deleteItemListInc(itemList)
+                        }
                     }
                 }
             }
 
+        // find all cloud lists
+        getFids()
+
+        // add listener to corresponding items
+        for (fid in fids){
+            addListenerForFid(fid)
+            refreshItems(fid)
+        }
+
+        Log.d("firebase", "${db.collection("lists")
+            .whereEqualTo("userID", mainActivity.userID!!)}")
+    }
+
+    fun refreshLists(){
         db.collection("lists")
-            .whereEqualTo("userID", mainActivity.userID!!)
+            .whereArrayContains("collab", mainActivity.userID!!).get()
+    }
+
+    fun refreshItems(fid : String){
+        db.collection("items").whereEqualTo("list_fid", fid)
+    }
+
+    // add listener to items corresponding to a single fid
+    fun addListenerForFid(fid : String){
+        db.collection("items").whereEqualTo("list_fid", fid)
             .addSnapshotListener(mainActivity) { snapshots, e ->
+
                 if (e != null) {
                     Log.w(TAG, "listen:error", e)
                     return@addSnapshotListener
@@ -60,30 +124,139 @@ class FireBaseUtil(val context: Context) {
 
                 for (dc in snapshots!!.documentChanges) {
                     when (dc.type) {
-                        DocumentChange.Type.ADDED -> Log.d(TAG, "New city: ${dc.document.data}")
-                        DocumentChange.Type.MODIFIED -> Log.d(TAG, "Modified city: ${dc.document.data}")
-                        DocumentChange.Type.REMOVED -> Log.d(TAG, "Removed city: ${dc.document.data}")
+                        DocumentChange.Type.ADDED -> {
+
+                            Log.d(TAG, "Listen to Item")
+
+                            // get new item
+                            val item = Item.from(dc.document.data)
+                            item.fid = dc.document.id
+
+                            // save new item
+                            downloadItem(item)
+                        }
+                        DocumentChange.Type.MODIFIED -> {
+
+                            Log.d(TAG, "Modify Item")
+
+                            // get new item
+                            val item = Item.from(dc.document.data)
+                            item.fid = dc.document.id
+
+                            // save new item
+                            downloadItem(item)
+                        }
+                        DocumentChange.Type.REMOVED -> {
+
+                            Log.d(TAG, "Delete Item")
+
+                            // get item to delete
+                            val item = Item.from(dc.document.data)
+                            item.fid = dc.document.id
+
+                            // delete item
+                            deleteItemInc(item)
+                        }
                     }
                 }
             }
     }
 
+    fun getFids(){
+        fids = arrayListOf()
+        val itemLists = mItemListViewModel.readAllData.value
+
+        if (itemLists != null){
+            for (itemList in itemLists){
+                if (!fids.contains(itemList.fid)){
+                    fids.add(itemList.fid)
+                }
+            }
+        }
+    }
+
+    fun deleteItemInc(deleteItem: Item){
+        // check if item exists
+        val oldItem = mItemViewModel.readAllData.value?.filter {  it.fid == deleteItem.fid }
+        if(oldItem != null && oldItem.isNotEmpty()){
+            deleteItem.id = oldItem[0].id
+            mItemViewModel.rmItem(deleteItem)
+        }
+    }
+
+    fun downloadItem(newItem: Item){
+
+        // check if item already exists
+        val oldItem = mItemViewModel.getItemByFid(newItem.fid)
+        if(oldItem != null){
+            newItem.id = oldItem.id
+            newItem.list_id = oldItem.list_id
+
+            Log.d(TAG, "Replace DL Item")
+        } else {
+            // otherwise find correspnding list
+            val listId = mItemListViewModel.getItemListByFid(newItem.list_fid)?.id
+            if (listId != null){
+                newItem.list_id = listId
+            } else {
+                Log.d(TAG, "No list found for list_fid!")
+            }
+        }
+
+
+
+
+        // save downloaded item
+        mItemViewModel.addItem(newItem)
+    }
+
+    fun deleteItemListInc(deleteItemList: ItemList){
+        // check if itemList already exists
+        val oldItemList = mItemListViewModel.getItemListByFid(deleteItemList.fid)
+        if(oldItemList != null){
+            deleteItemList.id = oldItemList.id
+            mItemListViewModel.rmItemList(deleteItemList)
+        }
+    }
+
+    fun downloadItemList(newItemList: ItemList){
+
+        // check if itemList already exists
+        val oldItemList = mItemListViewModel.getItemListByFid(newItemList.fid)
+        if(oldItemList != null){
+            newItemList.id = oldItemList.id
+        }
+
+        // save downloaded itemList
+        mItemListViewModel.addItemList(newItemList)
+    }
+
     fun uploadItem(item: Item){
+
+        Log.d("firestore", "Upload Item")
+
         // Add single item to firebase
-        val itemList = mItemListViewModel.readAllData.value?.filter { it.id == item.list_id }?.get(0)
+        val itemList = mItemListViewModel.getItemListById(item.list_id)
         if(itemList != null){
 
             // check if itemList is synced
             if(itemList.fid == ""){
+                Log.d(TAG, "Stop uplading, list has no fid")
                 return
             }
 
-            val newItem = db.collection("lists").document(itemList.fid).collection("items").document()
-            newItem.set(item)
+            // save firestore list_id
+            item.list_fid = itemList.fid
 
-            // update item
-            item.fid = newItem.id
-            mItemViewModel.addItem(item)
+            // upload item
+            if(item.fid != ""){
+                val updateItem = db.collection("items").document(item.fid)
+                updateItem.set(item)
+            } else {
+                val updateItem = db.collection("items").document()
+                item.fid = updateItem.id
+                updateItem.set(item)
+            }
         }
     }
 
@@ -112,7 +285,7 @@ class FireBaseUtil(val context: Context) {
                 return
             }
             for (item in items){
-                db.collection("lists").document(itemList.fid).collection("items").document(item.id.toString()).set(item)
+                db.collection("items").document(item.id.toString()).set(item)
             }
         }
     }
@@ -139,26 +312,30 @@ class FireBaseUtil(val context: Context) {
         //------------------------------------------------
         // add list to firestore
         val newItemList = db.collection("lists").document()
+        itemList.fid = newItemList.id
         newItemList.set(itemList)
 
         // add firebase id to itemList
-        itemList.fid = newItemList.id
-        mItemListViewModel.addItemList(itemList) // this write statement could probably be omitted
+        //mItemListViewModel.addItemList(itemList) // this write statement could probably be omitted
 
         // get list items
         val items = mItemViewModel.readAllData.value!!.filter {item -> item.list_id == itemListID}
 
         // add items to new list in firestore
-        for (item in items){
+        for (item in items) {
 
-            // add item to new list in firestore
-            newItemList.collection("items").document(item.id.toString()).set(item)
-                .addOnSuccessListener {
-                    Log.d(TAG, "Added item with ID ${item.id}")
-                }
-                .addOnFailureListener { exception ->
-                    Log.w(TAG, "Error adding document $exception")
-                }
+            // save firestore list_id
+            item.list_fid = itemList.fid
+
+            // upload item
+            if (item.fid != "") {
+                val updateItem = db.collection("items").document(item.fid)
+                updateItem.set(item)
+            } else {
+                val updateItem = db.collection("items").document()
+                item.fid = updateItem.id
+                updateItem.set(item)
+            }
         }
     }
 
@@ -174,12 +351,6 @@ class FireBaseUtil(val context: Context) {
     }
 
     fun rmList(itemList: ItemList) {
-
-        // Check if already in cloud
-        if (itemList.cloud == 0) {
-            return
-        }
-
         val itemListID = itemList.id
 
         // get items from local itemList
@@ -192,7 +363,7 @@ class FireBaseUtil(val context: Context) {
         for (locItem in locItems){
 
             // delete item from list in firestore
-            fItemList.collection("items").document(locItem.id.toString()).delete()
+            fItemList.collection("items").document(locItem.fid).delete()
                 .addOnSuccessListener {
                     Log.d(TAG, "Deleted item with ID ${locItem.id}")
                 }

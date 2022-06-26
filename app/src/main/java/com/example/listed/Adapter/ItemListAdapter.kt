@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
+import com.example.listed.Utils.ImageDataBase
 import com.example.ocoor.Fragments.AddItemFragment
 import com.example.ocoor.MainActivity
 import com.example.ocoor.R
@@ -96,10 +97,9 @@ class ItemListAdapter(
 
         // get cloud button
         val btnCloud = holder.binding.btnCloud
-        val itemList = itemListOfLists[position]
 
         // Set cloud button Icon
-        if(itemList.cloud == 0) {
+        if(currentItemList.cloud == 0) {
             btnCloud.setIconResource(R.drawable.ic_baseline_cloud_outline_24)
             btnCloud.invalidate()
         } else {
@@ -110,16 +110,17 @@ class ItemListAdapter(
         // Set delete button
         //------------------------------------------------------------------------------------------
         holder.binding.btnDelete.setOnClickListener {
-            mainActivity.dbif.deleteList(itemList)
+            mainActivity.dbif.deleteList(currentItemList)
         }
 
         // Set cloud button
         //------------------------------------------------------------------------------------------
         btnCloud.setOnClickListener {
+
             // if user is logged in: upload list to cloud
             if(mainActivity.userID != null){
                 // change cloud flag
-                if(itemList.cloud == 0){
+                if(currentItemList.cloud == 0){
                     btnCloud.setIconResource(R.drawable.ic_baseline_cloud_full_24)
                     btnCloud.invalidate()
 
@@ -164,8 +165,6 @@ class ItemListAdapter(
             // expand list
             //----------------------------------------------
         }
-
-
 
     }
 

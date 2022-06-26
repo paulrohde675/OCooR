@@ -44,6 +44,27 @@
             app:layout_constraintTop_toTopOf="parent"
             tool:text="sample" />
 
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            android:layout_margin="5dp"
+            android:elevation="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/image_view"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:visibility="gone">
+                </androidx.appcompat.widget.AppCompatImageView>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
+
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/item_tv_amount"
             android:layout_width="wrap_content"

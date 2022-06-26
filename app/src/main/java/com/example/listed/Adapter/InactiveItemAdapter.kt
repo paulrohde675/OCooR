@@ -71,7 +71,7 @@ class InactiveItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemView
             itemList[position].status = holder.binding.itemCheckbox.isChecked.toString()
             val newItem = itemList[position]
             newItem.status = "False"
-            mItemViewModel.addItem(newItem)
+            dbif.addItem(newItem)
         }
 
         holder.binding.itemTvGood.setOnLongClickListener {
@@ -83,8 +83,6 @@ class InactiveItemAdapter(var itemList: List<Item>, val mItemViewModel: ItemView
     override fun getItemCount(): Int {
         return itemList.size
     }
-
-    fun  Int.toBoolean() = this == 1
 
     fun setData(items: List<Item>){
         itemList = items.toMutableList()

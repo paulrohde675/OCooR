@@ -56,11 +56,9 @@ class ItemViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun getItemByID(getId:Int) : Item?{
+    fun getItemByFid(getId:String) : Item?{
         var item:Item? = null
-        viewModelScope.launch (Dispatchers.IO) {
-            item = repository.getItem(getId)
-        }
+        item = readAllData.value?.findLast {  it.fid == getId }
         return item
     }
 

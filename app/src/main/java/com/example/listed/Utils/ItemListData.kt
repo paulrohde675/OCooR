@@ -12,7 +12,18 @@ data class ItemList(
     @ColumnInfo(name = "fid") var fid: String = "",
     @ColumnInfo(name = "userID") var userID: String = "",
     @ColumnInfo(name = "collab") var collab: ArrayList<String> = ArrayList(),
-)
+) {
+    companion object {
+        fun from(map: Map<String, Any>) = object {
+            val id = 0
+            val name = map["name"] as String
+            val fid = map["fid"] as String
+            val cloud = 1
+            val userID = map["userID"] as String
+            val data = ItemList(id = id, name = name, fid = fid, cloud = cloud, userID = userID)
+        }.data
+    }
+}
 
 @Dao
 interface ItemListDao {

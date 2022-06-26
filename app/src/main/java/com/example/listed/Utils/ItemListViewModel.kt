@@ -27,13 +27,15 @@ class ItemListViewModel(application: Application): AndroidViewModel(application)
 
     }
 
-    fun getItemList(itemListID:Int):ItemList?{
+    fun getItemListById(itemListID:Int):ItemList?{
         var itemList:ItemList? = null
+        itemList = readAllData.value?.findLast{ it.id == itemListID}
+        return itemList
+    }
 
-        viewModelScope.launch (Dispatchers.IO){
-            itemList = repository.getItem(itemListID)
-        }
-        print("Return item list: ${itemList}")
+    fun getItemListByFid(itemListFID:String):ItemList?{
+        var itemList:ItemList? = null
+        itemList = readAllData.value?.findLast{ it.fid == itemListFID}
         return itemList
     }
 
