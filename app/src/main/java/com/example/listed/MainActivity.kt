@@ -470,10 +470,13 @@ class MainActivity : AppCompatActivity() {
 
         // [START mlkit_process_text_block]
         val resultText = result.text
+        Log.d(TAG, "result.text: ${result.text}")
         for (block in result.textBlocks) {
             val edit_text = block.text
-            val textSeq = edit_text.split(" ").toTypedArray()
+            val textSeq = edit_text.trim().split(" ").toTypedArray()
             text2Item(textSeq)
+
+            Log.d(TAG, "editText: $edit_text")
 
             /*
             val item = Item(id=0, status="False", itemText=block.text)

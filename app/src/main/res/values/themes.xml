@@ -3,7 +3,7 @@
     <style name="Theme.OCooR" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/cyanprocess</item>
-        <item name="colorPrimaryVariant">@color/cyanprocess_dark</item>
+        <item name="colorPrimaryVariant">@color/powder_blue</item>
         <item name="colorOnPrimary">@color/honeydew</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/liberty</item>

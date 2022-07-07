@@ -1,5 +1,8 @@
 package com.example.ocoor.Units
 
+import android.content.ContentValues.TAG
+import android.util.Log
+
 object BaseUnit {
 
     val massUnit = mapOf(
@@ -9,7 +12,9 @@ object BaseUnit {
         "Messerspitze" to 0.25f,
         "Prise" to 0.5f,
         "Teelöffel" to 5f,
+        "tl" to 5f,
         "Esslöffel" to 15f,
+        "el" to 15f,
     )
 
     val unitDict = mapOf(
@@ -27,8 +32,15 @@ object BaseUnit {
         "deziliter" to "dl",
         "zenti liter" to "zl",
         "zentiliter" to "zl",
+        "Messerspitze" to "ml",
+        "Prise" to "ml",
+        "Teelöffel" to "ml",
+        "tl" to "ml",
+        "Esslöffel" to "ml",
+        "el" to "ml",
         // countable
         "stk." to "stk",
+        "pck." to "pck",
         "Stück" to "stk",
         "stück" to "stk",
         // numbers
@@ -57,6 +69,8 @@ object BaseUnit {
         "an" to "1",
     )
 
+
+
     val volumeUnit = mapOf(
         "ml" to 1f,
         "zl" to 10f,
@@ -83,8 +97,13 @@ object BaseUnit {
     }
 
     fun convertEquiUnit(unit:String) : String?{
-        val newUnit = unitDict.get(unit)
-        println("New Unit: $newUnit | $unit")
+        var newUnit = unitDict.get(unit)
+
+        // try to remove
+        if(newUnit == null){
+            newUnit = unitDict.get(unit.dropLast(1))
+            Log.d(TAG, unit.dropLast(1))
+        }
         if(newUnit != null){
             return newUnit
         }

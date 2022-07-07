@@ -124,13 +124,18 @@ class ItemAdapter(
         }
 
         // search image in db
-        var imageName = imageDB[currentItem.good.lowercase().trim()]
-        if(imageName == null){
-            imageName = imageDB[currentItem.good.lowercase().trim().dropLast(1)]
+        val goodName = currentItem.good.lowercase().trim()
+        var imageName: String? = ""
+        if (goodName.isNotEmpty()){
+            imageName = imageDB[goodName]
+            if(imageName == null){
+                imageName = imageDB[goodName.dropLast(1)]
+            }
+            if(imageName == null){
+                imageName = goodName[0].toString()
+            }
         }
-        if(imageName == null){
-            imageName = "bu_image"
-        }
+
 
         // add item image
         val id = mainActivity.resources.getIdentifier(imageName, "drawable",

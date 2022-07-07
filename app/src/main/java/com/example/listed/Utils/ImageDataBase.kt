@@ -7,106 +7,135 @@ import com.example.ocoor.Utils.SpeechRecognizerModule
 class ImageDataBase(context: Context) {
 
     val imageNames = mapOf(
-        "erdbeere" to "img_20220621_wa0001",
-
-        "ruccula" to "img_20220621_wa0002",
-
-        "oregano" to "img_20220621_wa0003",
-
-        "frühlingszwiebel" to "img_20220621_wa0004",
-
-        "majoran" to "img_20220621_wa0005",
-
-        "zwiebel" to "img_20220621_wa0006",
-
-        "bohnenkraut" to "img_20220621_wa0007",
-
-        "melone" to "img_20220621_wa0008",
-        "wassermelone" to "img_20220621_wa0008jpg",
-
-        "banane" to "img_20220621_wa0009",
-
-        "schnittlauch" to "img_20220621_wa0010",
-
-        "kürbis" to "img_20220621_wa0011",
-
-        "tomate" to "img_20220621_wa0012",
-
-        "dill" to "img_20220621_wa00013",
-
-        "orange" to "img_20220621_wa0014",
-
-        "mais" to "img_20220621_wa0015",
-
-        "zucchini" to "img_20220621_wa0016",
-
-        "koriander" to "img_20220621_wa0017",
-
-        "traube" to "img_20220621_wa00018",
-
-        "möhre" to "img_20220621_wa00019",
-        "karotte" to "img_20220621_wa00019",
-
-
-        "salbei" to "img_20220621_wa0020",
-
-        "avocado" to "img_20220621_wa0021",
-
-        "birne" to "img_20220621_wa0022",
-
-        "pilz" to "img_20220621_wa0023",
-        "champinon" to "img_20220621_wa0023",
-
-        "petersilie" to "img_20220621_wa00024",
-
-        "rote bete" to "img_20220621_wa0025",
-        "rotebete" to "img_20220621_wa0025",
-
-        "apfel" to "img_20220621_wa0026",
-        "äpfel" to "img_20220621_wa0026",
-
-        "kirsche" to "img_20220621_wa0027",
-
-        "lauch" to "img_20220621_wa0028",
-        "porree" to "img_20220621_wa0028",
-
-        "chili" to "img_20220621_wa00029",
-        "chilli" to "img_20220621_wa00029",
-        "peperoini" to "img_20220621_wa00029",
-
-        "radischen" to "img_20220621_wa0030",
-
-        "estragon" to "img_20220621_wa0032",
-
-        "tomate" to "img_20220621_wa0033",
-        "strauchtomate" to "img_20220621_wa0033",
-
-        "butternusskürbis" to "img_20220621_wa0034",
-
-        "basilikum" to "img_20220621_wa00035",
-
-        "thymian" to "img_20220621_wa0036",
-
-        "ingwer" to "img_20220621_wa0037",
-
-        "aubergine" to "img_20220621_wa0038",
-
-        "knoblauch" to "img_20220621_wa0039",
-
-        "zitrone" to "img_20220621_wa0040",
-
-        "lorbeer" to "img_20220621_wa0041",
-        "lorbeerblatt" to "img_20220621_wa0041",
-
-        "minze" to "img_20220621_wa0042",
-
-        "paprika" to "img_20220621_wa0043",
-
-        "rosmarin" to "img_20220621_wa0044",
-
-        "gurke" to "img_20220621_wa0045",
+        "ananas" to "ananas",
+        "apfel" to "apfel",
+        "artischocke" to "artischocke",
+        "aubergine" to "aubergine",
+        "auster" to "austern",
+        "avocado" to "avocado",
+        "bacon" to "bacon",
+        "speck" to "bacon",
+        "baguette" to "baguette",
+        "banane" to "banane",
+        "basilikum" to "basilikum",
+        "birne" to "birne",
+        "blumenkohl" to "blumenkohl",
+        "bohnenkraut" to "bohnenkraut",
+        "brezel" to "brezel",
+        "brokkoli" to "brokkoli",
+        "brombeere" to "brombeeren",
+        "brot" to "brot",
+        "brötchen" to "brötchen",
+        "butternusskürbis" to "butternusskürbis",
+        "cashew" to "cashews",
+        "champignon" to "champignons",
+        "chili" to "chili",
+        "chilli" to "chili",
+        "chinakohl" to "chinakohl",
+        "cocktailtomaten" to "cocktailtomaten",
+        "croissant" to "croissant",
+        "dattel" to "datteln",
+        "dill" to "dill",
+        "edamer" to "edamer",
+        "käse" to "edamer",
+        "emmentaler" to "emmentaler",
+        "erdbeere" to "erdberee",
+        "erdnüsse" to "erdnüsse",
+        "estragon" to "estragon",
+        "farfalle" to "farfalle",
+        "feta" to "feta",
+        "fleischtomaten" to "fleischtomaten",
+        "forelle" to "forelle",
+        "fisch" to "forelle",
+        "frühlingszwiebel" to "frühlingszwiebel",
+        "gurke" to "gurke",
+        "haselnüsse" to "haselnüsse",
+        "haselnuss" to "haselnüsse",
+        "heidelbeere" to "heidelbeeren",
+        "hering" to "hering",
+        "himbeere" to "himbeeren",
+        "hokkaidokürbis" to "hokkaidokürbis",
+        "kürbis" to "Hokkaidokürbis",
+        "hummer" to "hummer",
+        "ingwer" to "ingwer",
+        "johannisbeere" to "johannisbeere",
+        "kabeljau" to "kabeljau",
+        "karotte" to "karotte",
+        "kirsche" to "kirsche",
+        "kiwi" to "kiwi",
+        "knoblauch" to "knoblauch",
+        "knollensellerie" to "knollensellerie",
+        "sellerie" to "knollensellerie",
+        "kohl" to "kohl",
+        "kohlrabi" to "kohlrabi",
+        "koriander" to "koriander",
+        "kürbiskern" to "kürbiskerne",
+        "lachs" to "lachs",
+        "lauch" to "lauch",
+        "porree" to "lauch",
+        "leinensamen" to "leinensamen",
+        "lorbeerblatt" to "lorbeerblatt",
+        "lorbeerblätter" to "lorbeerblatt",
+        "lorbeerblatt" to "lorbeerblatt",
+        "macadamianüsse" to "macadamianüsse",
+        "macadamianuss" to "macadamianüsse",
+        "mais" to "mais",
+        "majoran" to "majoran",
+        "mandarine" to "mandarine",
+        "mandel" to "mandel",
+        "mango" to "mango",
+        "maracuja" to "maracuja",
+        "maultasche" to "maultaschen",
+        "minze" to "minze",
+        "mozzarella" to "mozzarella",
+        "buratta" to "mozzarella",
+        "muffin" to "muffin",
+        "muschel" to "muscheln",
+        "auster" to "muscheln",
+        "nektarine" to "nektarine",
+        "olive" to "olive",
+        "orange" to "orange",
+        "oregano" to "oregano",
+        "paprika" to "paprika",
+        "parmesan" to "parmesan",
+        "pecanüsse" to "pecanüsse",
+        "pecanuss" to "pecanüsse",
+        "petersilie" to "petersilie",
+        "pfirsisch" to "pfirsisch",
+        "pflaume" to "pflaume",
+        "pininenkerne" to "pininenkerne",
+        "pstazie" to "pistazien",
+        "radischen" to "radischen",
+        "ricotta" to "ricotta",
+        "rosmarin" to "rosmarin",
+        "rote beete" to "rote beete",
+        "ruccula" to "ruccula",
+        "salamie" to "salamie",
+        "wurst" to "salamie",
+        "aufschnitt" to "salamie",
+        "salat" to "salat",
+        "salbei" to "salbei",
+        "scampi" to "scampi",
+        "seafood" to "scampi",
+        "schnittlauch" to "schnittlauch",
+        "seasam" to "sesam",
+        "schrimps" to "schrimps",
+        "sonnenblumenkern" to "sonnenblumenkerne",
+        "spargel" to "spargel",
+        "stachelbeere" to "stachelbeere",
+        "staudensellerie" to "staudensellerie",
+        "thunfisch" to "tunfisch",
+        "thymian" to "thymian",
+        "tintenfisch" to "tintenfisch",
+        "toast" to "toast",
+        "traube" to "trauben",
+        "walnüsse" to "walnüsse",
+        "walnuss" to "walnüsse",
+        "wassermelone" to "wassermelone",
+        "zitrone" to "zitrone",
+        "zucchini" to "zucchini",
+        "zwiebel" to "zwiebel",
     )
-
 
     companion object : SingletonHolder<ImageDataBase, Context>(::ImageDataBase)
 }
