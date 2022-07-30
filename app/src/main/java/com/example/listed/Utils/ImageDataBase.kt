@@ -1,6 +1,8 @@
 package com.example.listed.Utils
 
+import android.content.ContentValues
 import android.content.Context
+import android.util.Log
 import com.example.ocoor.Utils.SingletonHolder
 import com.example.ocoor.Utils.SpeechRecognizerModule
 
@@ -136,6 +138,36 @@ class ImageDataBase(context: Context) {
         "zucchini" to "zucchini",
         "zwiebel" to "zwiebel",
     )
+
+
+    fun findImageToGood(goodName: String): String{
+        var imageName: String
+
+        // iterate over string to find substring that matches db
+        imageName = findGoodNameInDB(goodName.lowercase().trim())
+
+        // if no matching string is found use the first letter
+        if(imageName.isEmpty()){
+            imageName = goodName.lowercase().trim()[0].toString()
+        }
+
+        return imageName
+    }
+
+    private fun findGoodNameInDB(goodName: String): String{
+        // iterate over string to find substring that matches db
+        var imageName: String? = null
+        val len = goodName.length
+        for (r in len downTo 2){
+            for (l in 0..r-2){
+                imageName = imageNames[goodName.substring(l,r)]
+                if(imageName != null){
+                    return imageName
+                }
+            }
+        }
+        return ""
+    }
 
     companion object : SingletonHolder<ImageDataBase, Context>(::ImageDataBase)
 }

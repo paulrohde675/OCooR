@@ -31,6 +31,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.listed.Fragments.ListOfListsFragment
 import com.example.listed.Utils.DataBaseInterface
+import com.example.listed.Utils.ImageDataBase
 import com.example.ocoor.Fragments.ActiveRecyclerViewFragment
 import com.example.ocoor.Fragments.AddItemFragment
 import com.example.ocoor.Fragments.AddListFragment
@@ -240,7 +241,9 @@ class MainActivity : AppCompatActivity() {
         // login
         gAuth = Firebase.auth
         loginGoogle = LoginGoogle(this)
-        //loginGoogle.signIn()
+        if(settingViewModel.userLoggedIn()){
+            loginGoogle.signIn()
+        }
 
         // FireBase
         dbif = DataBaseInterface(this)
@@ -577,6 +580,10 @@ class MainActivity : AppCompatActivity() {
                 // try to merge item with list
                 if(!mItemViewModel.mergeItemWithList(item!!)){
                     // else: add Item to database
+
+                    // search item image
+
+                    item.imageName = ImageDataBase(this).findImageToGood(item.good)
                     dbif.addItem(item)
                 }
             } else { // if there is an itemID it means the item should be overwritten

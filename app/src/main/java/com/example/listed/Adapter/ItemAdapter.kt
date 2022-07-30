@@ -1,5 +1,6 @@
 package com.example.ocoor.Adapter
 
+import android.content.ContentValues.TAG
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
@@ -123,22 +124,9 @@ class ItemAdapter(
             activateItemFrame(holder.binding.cvItem)
         }
 
-        // search image in db
-        val goodName = currentItem.good.lowercase().trim()
-        var imageName: String? = ""
-        if (goodName.isNotEmpty()){
-            imageName = imageDB[goodName]
-            if(imageName == null){
-                imageName = imageDB[goodName.dropLast(1)]
-            }
-            if(imageName == null){
-                imageName = goodName[0].toString()
-            }
-        }
-
-
         // add item image
-        val id = mainActivity.resources.getIdentifier(imageName, "drawable",
+        Log.d(TAG, "Imagename: ${currentItem.imageName}")
+        val id = mainActivity.resources.getIdentifier(currentItem.imageName, "drawable",
             mainActivity.packageName
         )
         holder.binding.imageView.setImageResource(id)
@@ -146,7 +134,7 @@ class ItemAdapter(
 
     }
 
-    fun activateItemFrame(itemCardView: com.google.android.material.card.MaterialCardView?) {
+    private fun activateItemFrame(itemCardView: com.google.android.material.card.MaterialCardView?) {
         itemCardView?.strokeWidth = 8
         itemCardView?.invalidate()
         selectedItem = itemCardView

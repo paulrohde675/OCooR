@@ -40,6 +40,12 @@ class LoginGoogle(val context: Context) {
         // init intent
         val signInIntent = googleSignInClient.signInIntent
         startActivityForResult(mainActivity, signInIntent, REQ_ONE_TAP, null)
+
+        // update settings data
+        Log.d(TAG, "Set Settings")
+        val settings =  mainActivity.settingViewModel.getSettings()
+        settings.loggedin = 1
+        mainActivity.settingViewModel.updateSettings(settings)
     }
 
     // signout

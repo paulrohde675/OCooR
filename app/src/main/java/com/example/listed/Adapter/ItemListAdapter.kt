@@ -4,20 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.compose.ui.text.toLowerCase
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
-import com.example.listed.Utils.ImageDataBase
-import com.example.ocoor.Fragments.AddItemFragment
 import com.example.ocoor.MainActivity
 import com.example.ocoor.R
-import com.example.ocoor.Utils.Item
 import com.example.ocoor.Utils.ItemList
 import com.example.ocoor.Utils.ItemListViewModel
-import com.example.ocoor.Utils.ItemViewModel
-import com.example.ocoor.databinding.ItemLayoutBinding
 import com.example.ocoor.databinding.ListLayoutBinding
 import kotlinx.android.synthetic.main.list_layout.view.*
 import java.text.DecimalFormat
@@ -75,24 +68,22 @@ class ItemListAdapter(
             //mainActivity.selectedListId = currentItemList.id
 
             // select list
-            val settings =  mainActivity.settingViewModel.readAllData.value
-            if(settings != null){
+            val settings =  mainActivity.settingViewModel.getSettings()
 
-                settings.selected_list_id = currentItemList.id
-                mainActivity.settingViewModel.updateSettings(settings)
-                selectedList = currentItemList
+            settings.selected_list_id = currentItemList.id
+            mainActivity.settingViewModel.updateSettings(settings)
+            selectedList = currentItemList
 
-                // remove frame if new item is selected
-                //----------------------------------------------
-                deactivateItemFrame()
+            // remove frame if new item is selected
+            //----------------------------------------------
+            deactivateItemFrame()
 
-                // add frame to selected item
-                //----------------------------------------------
-                activateItemFrame(holder.binding.cvItem)
+            // add frame to selected item
+            //----------------------------------------------
+            activateItemFrame(holder.binding.cvItem)
 
-                // go back to main activity
-                //mainActivity.onBackPressed();
-            }
+            // go back to main activity
+            //mainActivity.onBackPressed();
         }
 
         // get cloud button

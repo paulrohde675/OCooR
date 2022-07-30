@@ -25,7 +25,14 @@ class SettingViewModel(application: Application): AndroidViewModel(application) 
                 println("No new settings")
             }
         }
-    println("Done Init")
+    }
+
+    fun getSettings() : SettingData {
+        return readAllData.value!!
+    }
+
+    fun userLoggedIn() : Boolean{
+        return readAllData.value?.loggedin == 1
     }
 
     fun updateSettings(settingData : SettingData){

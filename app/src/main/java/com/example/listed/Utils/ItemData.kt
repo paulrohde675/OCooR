@@ -14,7 +14,8 @@ data class Item(
     @ColumnInfo(name = "itemText") val itemText: String = "",
     @ColumnInfo(name = "unit") var unit: String = "",
     @ColumnInfo(name = "amount") var amount: Float = 1f,
-    @ColumnInfo(name = "good") var good: String = ""
+    @ColumnInfo(name = "good") var good: String = "",
+    @ColumnInfo(name = "imageName") var imageName: String = ""
 ) {
     companion object {
         fun from(map: Map<String, Any>) = object {
@@ -27,6 +28,7 @@ data class Item(
             val unit = map["unit"] as String
             val amount = map["amount"] as Double
             val good = map["good"] as String
+            val imageName = map["imageName"] as String
             val data = Item(
                     id = id,
                     status = status,
@@ -37,6 +39,7 @@ data class Item(
                     unit = unit,
                     amount = amount.toFloat(),
                     good = good,
+                    imageName = imageName,
                 )
         }.data
     }
